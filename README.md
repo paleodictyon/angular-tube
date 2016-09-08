@@ -10,4 +10,5 @@ Todo
   - Fix Screenshot Previews
   - Make CSS Prettier
   - Get better at Git
-
+  - Test in anything other than Chrome on Linux
+  - Play video in browser, rather than just providing link
