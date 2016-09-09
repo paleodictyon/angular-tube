@@ -5,6 +5,9 @@ angular.module('angularTubeApp')
    .controller('MainCtrl', ['$scope', '$interval', '$http', '$anchorScroll', '$location', 
     function ($scope, $interval, $http, $anchorScroll, $location) {
 
+        $scope.debug = false; //Switch to True to show a <pre> with current variable values 
+
+        $scope.advancedFilters = false;
 
         $scope.s = {
           cast:[],
@@ -26,19 +29,17 @@ angular.module('angularTubeApp')
         }
 
   $scope.applyFilter = function(){
-    $scope.s.title = $scope.f.title;
-    $scope.s.cast = $scope.f.cast;
-    $scope.s.tags = $scope.f.tags;
-    $scope.s.castMatch = $scope.f.castMatch;
-    $scope.s.tagMatch = $scope.f.tagMatch;
-    $scope.s.duration.min = $scope.f.duration.min;
+    $scope.s.title          = $scope.f.title;
+    $scope.s.cast           = $scope.f.cast;
+    $scope.s.tags           = $scope.f.tags;
+    $scope.s.castMatch      = $scope.f.castMatch;
+    $scope.s.tagMatch       = $scope.f.tagMatch;
+    $scope.s.duration.min   = $scope.f.duration.min;
     $scope.$apply();
   }
 
   $scope.scrollToTop = function() {
     $location.hash('MeatAndPotatos');
-
-    // call $anchorScroll()
     $anchorScroll();
   };
 
@@ -60,101 +61,96 @@ $scope.remove = function(tagText, tagListID) {
   $scope.fetchedTags[tagListID] = newTagArray;    
 }
 
-  $scope.getTags = function(fileName, filmid){
-        fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-     $http.get('file.php?f='+fileName)
-        .then(function(res) {
-            console.log(res.data);
-            $scope.filmDB[filmid].tags = res.data;
-            $scope.fetchedTagsForFilm = filmid;
-            $scope.fetchedTags = res.data;
-            $('#tagModal').modal('show');
-        }, function errorCallback(response) {
-        console.log("Error loading tags.");
-      });
-  };
+$scope.getTags = function(fileName, filmid){
+      fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
+   $http.get('file.php?f='+fileName)
+      .then(function(res) {
+          console.log(res.data);
+          $scope.filmDB[filmid].tags = res.data;
+          $scope.fetchedTagsForFilm = filmid;
+          $scope.fetchedTags = res.data;
+          $('#tagModal').modal('show');
+      }, function errorCallback(response) {
+      console.log("Error loading tags.");
+    });
+};
 
 
 
-     $http.get('./db/filmDB.json')
-        .then(function(res) {
-            $scope.filmDB = res.data;
-            $scope.shuffle($scope.filmDB);
+  $http.get('./db/filmDB.json')
+    .then(function(res) {
+        $scope.filmDB = res.data;
+        $scope.shuffle($scope.filmDB);
+    }, function errorCallback(response) {
+    console.log(response);
+    console.log("Error loading json.");
+  });
 
-        }, function errorCallback(response) {
-        console.log(response);
-        console.log("Error loading json.");
-          
-      });
 
-    //console.log("logging filmDB VVVVVVVVVVVV");
-    //console.log($scope.filmDB);
-    //console.log("logging filmDB ^^^^^^^^^^");
+  $scope.debug = true;
 
-    $scope.debug = true;
+  $scope.startScreenPreview = function(filmid){
 
-    $scope.startScreenPreview = function(filmid){
+    $interval.cancel($scope.intervalPromise);
+    var i = 0;
+    var shotsLength = $scope.filteredDB[filmid].sshot.length;
+    var shots = $scope.filteredDB[filmid].sshot;
+    $scope.intervalPromise = $interval(function(){
+      i = i + 1;
 
-      $interval.cancel($scope.intervalPromise);
-      var i = 0;
-      var shotsLength = $scope.filteredDB[filmid].sshot.length;
-      var shots = $scope.filteredDB[filmid].sshot;
-      $scope.intervalPromise = $interval(function(){
-        i = i + 1;
+      if (i == shotsLength) {
+        i = 0;
+      };
 
-        if (i == shotsLength) {
-          i = 0;
-        };
+      $scope.filteredDB[filmid].currentScreenshot = shots[i];
+      $scope.currentScreenshot = shots[i]; 
+    }, 500);
+  }
+  $scope.setEdit = function(filmid){
+    $scope.editItem = filmid;
+    //console.log(filmid);
+  }
 
-        $scope.filteredDB[filmid].currentScreenshot = shots[i];
-        $scope.currentScreenshot = shots[i]; 
-      }, 500);
-    }
-    $scope.setEdit = function(filmid){
-      $scope.editItem = filmid;
-      //console.log(filmid);
-    }
+  $scope.stopScreenPreview = function(filmid){
+    $interval.cancel($scope.intervalPromise);
+    $scope.filteredDB[filmid].currentScreenshot = $scope.filteredDB[filmid].sshot[0];
+  }
+  
+  $scope.pushCast = function(castMember){
+    var temp = [castMember];
+    $scope.s.cast = $scope.s.cast.concat(temp);
+  }
+  
+  $scope.pushTag = function(tag){
+    var temp = [tag];
+    $scope.s.tags = $scope.s.tags.concat(temp);
+  }
 
-    $scope.stopScreenPreview = function(filmid){
-      $interval.cancel($scope.intervalPromise);
-      $scope.filteredDB[filmid].currentScreenshot = $scope.filteredDB[filmid].sshot[0];
-    }
-    
-    $scope.pushCast = function(castMember){
-      var temp = [castMember];
-      $scope.s.cast = $scope.s.cast.concat(temp);
-    }
-    
-    $scope.pushTag = function(tag){
-      var temp = [tag];
-      $scope.s.tags = $scope.s.tags.concat(temp);
-    }
+  
+  $scope.saveDB = function() {
+      $http.post('filmDB.php', $scope.filmDB);
+  }
+  $scope.setStatus = function(text) {
+      $scope.status = text.replace('/media/mephesto/Azul/porn','').replace('/media/mephesto/Scarlett','');
+  }
 
-    
-    $scope.saveDB = function() {
-        $http.post('filmDB.php', $scope.filmDB);
-    }
-    $scope.setStatus = function(text) {
-        $scope.status = text.replace('/media/mephesto/Azul/porn','').replace('/media/mephesto/Scarlett','');
-    }
+  $scope.shuffle = function(o) {
+      for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+      return o;
+  }
 
-    $scope.shuffle = function(o) {
-        for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-        return o;
-    }
-
-    $scope.filmDuration = function(fD) {
-            if (fD < 1) return "";
-            var t = {};
-            t.h = Math.floor(fD / 3600);
-            t.m = Math.floor(fD / 60) % 60;
-            t.s = fD % 60;
-            if (t.h > 0)
-                return t.h + "h " + t.m + "m " + t.s + "s"
-            if (t.m > 0)
-                return t.m + "m " + t.s + "s"
-            return t.s + "s";
-        }
+  $scope.filmDuration = function(fD) {
+          if (fD < 1) return "";
+          var t = {};
+          t.h = Math.floor(fD / 3600);
+          t.m = Math.floor(fD / 60) % 60;
+          t.s = fD % 60;
+          if (t.h > 0)
+              return t.h + "h " + t.m + "m " + t.s + "s"
+          if (t.m > 0)
+              return t.m + "m " + t.s + "s"
+          return t.s + "s";
+      }
 
 
     
