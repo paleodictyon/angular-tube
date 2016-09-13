@@ -16,8 +16,20 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
   return function(items, s){
     var filtered = [];
 
+    var foundBy = {
+        cast:false,
+        title:false,
+        tag:false,
+        duration:false,
+        later:false
+      }
+
+    var found = false;
+    var failed = false;
+
     if (s.title == "" && s.duration.min == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false) {
       //No Filters are Set, Return a slice of the entire array.
+      console.log("No Filters Set");
       return items.slice(s.perPage * s.page, s.perPage * s.page + s.perPage);
     };
 

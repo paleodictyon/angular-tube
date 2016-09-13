@@ -5,6 +5,7 @@
   Cast: {{s.cast}} - {{s.castMatch}}
   Tags: {{s.tags}} - {{s.tagMatch}}
   filtered db length {{filteredDB.length}}
+  {{s}}
 
 s.page = {{s.page}}
 
@@ -113,7 +114,7 @@ s.perPage = {{s.perPage}}
 
   <div class="col-sm-12">
     
-    <div ng-repeat="(filmid, film) in filteredDB = ( filmDB | filmSearch:s)">
+    <div ng-repeat="(filmid, film) in filmDB | filmSearch:s">
       <div class="col-xs-12 col-md-6 col-lg-4 text-center ">
       
         <div class="embed-responsive embed-responsive-16by9">
