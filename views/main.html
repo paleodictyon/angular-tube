@@ -1,15 +1,17 @@
 <pre ng-show="debug==true" ng-init=
-"s.title='';s.cast=[];s.tags=[];s.castMatch=-1;s.tagMatch=-1;s.perPage=12;s.page=0;s.later=false;
-f.title='';f.cast=[];f.tags=[];f.castMatch=-1;f.tagMatch=-1;f.perPage=12;f.page=0">
+"">
   Search Parameters
   Title: {{s.title}}
   Cast: {{s.cast}} - {{s.castMatch}}
   Tags: {{s.tags}} - {{s.tagMatch}}
-  filtered db length{{filteredDB.length}}
+  filtered db length {{filteredDB.length}}
 
 s.page = {{s.page}}
 
 s.perPage = {{s.perPage}}
+
+ Filter Parameters
+  {{f}}
 </pre>
 
 <div class="row" class="text-center advancedFilters fixPadding">
@@ -32,7 +34,7 @@ s.perPage = {{s.perPage}}
       <span class="input-group-addon" ng-click="f.castMatch = 0 - f.castMatch" ng-show="f.castMatch == -1" >
         MATCH<br>ANY
       </span>
-      <span class="input-group-addon" ng-click="s.castMatch = 0 - f.castMatch" ng-show="f.castMatch == 1" >
+      <span class="input-group-addon" ng-click="f.castMatch = 0 - f.castMatch" ng-show="f.castMatch == 1" >
         <strong>MATCH<br>ALL</strong>
       </span>
     </div>
@@ -60,7 +62,9 @@ s.perPage = {{s.perPage}}
   </div>
 
   <div class="col-xs-6 col-md-3">
-    <button ng-click="applyFilter();" class="btn btn-default"><i class="fa fa-check-circle"></i></button>
+    <button ng-click="applyFilter();" class="btn btn-default" title="Apply Filters">
+      <i class="fa fa-check-circle"></i>
+    </button>
   </div>
 
 </div>
@@ -68,7 +72,7 @@ s.perPage = {{s.perPage}}
 
 <div class="row" id="MeatAndPotatos">
 
-  <div ng-init="editItem = -1" ng-hide="true" class="col-xs-6 hidden-xs leftSideThing">
+  <div ng-hide="true" ng-init="editItem = -1" class="col-xs-6 hidden-xs leftSideThing">
     <div class="leftPreview"  ng-class="editItem == -1 ? '' : 'editingBackground' " style="background-image:url({{currentScreenshot}}); "></div>
     <div ng-show="editItem != -1" style="position:absolute;top:0;left:0;">
 
@@ -186,7 +190,7 @@ s.perPage = {{s.perPage}}
 
   <div class="col-sm-6 hidden-xs text-center">
     <button class="btn  btn-sm btn-default" ng-click="saveDB()"> Save to Database </button>
-    <button class="btn btn-sm btn-default" ng-click="shuffle(filteredDB)"> Shuffle </button>  
+    <button class="btn btn-sm btn-default" ng-click="shuffleDB()"> Shuffle </button>  
   </div>
 
   <div class="col-sm-6 text-center">

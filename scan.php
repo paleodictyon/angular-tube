@@ -4,28 +4,46 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 $i = 1;
 
+$config = array(
+  "screenshot_count"    => 5,
+  "ss_percent"          => [
+                              0 => .10,
+                              1 => .25,
+                              2 => .50,
+                              3 => .75,
+                              4 => .9
+                            ],
+  "screenshot_dir"      => "screenshots",
+  'root'                => '/media/mephesto/Scarlett/', //Root location to scan
+  'film_database_path'  => 'filmDB.json',
+  'report_every_n'      => 100, //echo output after every nth item.
+);
 
-$root = '/media/paleodictyon/Scarlett/';
-
+//require (include) specified file, but store it in a variable.
 function requireToVar($file){
   ob_start();
   require($file);
   return ob_get_clean();
 }
 
-$jsonRaw = requireToVar("filmDB.json");
-//var_dump($JSON);
+//PHP Require, but store in $jsonRaw instead of dumping.
+//Basically gather up the exisitng FilmDB.
+$jsonRaw = requireToVar($config['film_database_path']);
 $jsonRaw = json_decode($jsonRaw);
 
+//iterate through filmDB
 foreach ($jsonRaw as $j){
   $JSON[$j->hash] = $j;
 }
 
+//
+// NOTE:  REQUIRES PHPFFMPEG WHICH I WAS INCLUDING WITH COMPOSER.
+// https://github.com/PHP-FFMpeg/PHP-FFMpeg
 
 require __DIR__ . '/vendor/autoload.php';
 
-function bug($string){
-  //echo $string;/*Comment out to disable*/
+function dbug($string){
+  //echo $string."\n";/*Comment out to disable*/
 }
 
 function createUniqueHash($filename, $filesize){
@@ -37,12 +55,12 @@ function createUniqueHash($filename, $filesize){
 $ffmpeg = FFMpeg\FFMpeg::create();
 $ffprobe = FFMpeg\FFProbe::create();
 
-bug("<pre>");
+dbug("<pre>");
 //phpinfo(); die();
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
 
 $iter = new RecursiveIteratorIterator(
-          new RecursiveDirectoryIterator($root, RecursiveDirectoryIterator::SKIP_DOTS),
+          new RecursiveDirectoryIterator($config['root'], RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::SELF_FIRST,
             RecursiveIteratorIterator::CATCH_GET_CHILD // Ignore "Permission denied"
         );
@@ -59,6 +77,7 @@ foreach ($iter as $path => $file) {
       //Ignore it, it's a directory
     } 
       elseif ( 
+        //Prevent half-baked torrent downloads.
         substr($path,-5) != ".part" 
         && substr($path,-4) != ".az!" 
         && !preg_match('/[^\x20-\x7f]/',$path)
@@ -69,54 +88,49 @@ foreach ($iter as $path => $file) {
       {
         if (isset($JSON[$hash]))
         {
-          bug("File found\n");
+          dbug("File found");
           $OUTPUT[] = $JSON[$hash];
         } 
         else 
         {
-          bug("File not found");
-          echo '[' . $i++ . '] ' . "$path\n";
+          dbug("File not found");
+
+          $i++;
+
+          if( $i % $config['report_every_n'] == 0)
+            echo "[$i] $path\n";
+
           $duration = (int)$ffprobe
-            ->streams($path) // extracts streams informations
+            ->streams($path)                // extracts streams informations
             ->videos()                      // filters video streams
             ->first()                       // returns the first video stream
             ->get('duration');              // returns the duration property
           $video = $ffmpeg->open($path);
-          $screenDir = substr($hash,0,1);
 
-          if (!file_exists("screenshots/".$screenDir."/".$hash.'-1.jpg')) {
-            $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds((int)($duration*.1)));
-            $frame->save("screenshots/".$screenDir."/".$hash.'-1.jpg');
+          $screenDir = $config['screenshot_dir']. "/". substr($hash,0,1) . "/";
+
+
+          for( $j = 0; $j < $config['screenshot_count']; $j++ ){
+
+            $screenshot_filename = $screenDir . $hash . '-' . ($j + 1) .'.jpg';
+            //$screenshot_filename = "poop.jpg";
+            $screenshot_time     = (int)( $duration * $config['ss_percent'][$j] );
+            dbug("Checking for a screenshot $screenshot_filename");
+
+            if (!file_exists( $screenshot_filename )) {
+
+              $frame = $video->frame( FFMpeg\Coordinate\TimeCode::fromSeconds($screenshot_time ) );
+              $frame->save( $screenshot_filename );
+              dbug("Grabbed screenshot $screenshot_filename");
+            } else {
+              dbug("FOUND screenshot already exists: $screenshot_filename");
+            }
+
+            $sshot[] = $screenshot_filename;
+
           }
 
-          if (!file_exists("screenshots/".$screenDir."/".$hash.'-2.jpg')) {
-            $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds((int)($duration*.25)));
-            $frame->save("screenshots/".$screenDir."/".$hash.'-2.jpg');
-          }
-
-          if (!file_exists("screenshots/".$screenDir."/".$hash.'-3.jpg')) {
-            $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds((int)($duration*.5)));
-            $frame->save("screenshots/".$screenDir."/".$hash.'-3.jpg');
-          }
-
-          if (!file_exists("screenshots/".$screenDir."/".$hash.'-4.jpg')) {
-            $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds((int)($duration*.75)));
-            $frame->save("screenshots/".$screenDir."/".$hash.'-4.jpg');
-          }
-
-          if (!file_exists("screenshots/".$screenDir."/".$hash.'-5.jpg')) {
-            $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds((int)($duration*.9)));
-            $frame->save("screenshots/".$screenDir."/".$hash.'-5.jpg');/**/
-          }
-
-          $sshot = array(
-            "screenshots/".$screenDir."/".$hash.'-1.jpg',
-            "screenshots/".$screenDir."/".$hash.'-2.jpg',
-            "screenshots/".$screenDir."/".$hash.'-3.jpg',
-            "screenshots/".$screenDir."/".$hash.'-4.jpg',
-            "screenshots/".$screenDir."/".$hash.'-5.jpg'
-          );
-
+          
           $OUTPUT[] = 
           [
             "sshot"   =>  $sshot, 
@@ -142,4 +156,4 @@ $jsonFile = "New-filmDB.json";
 echo "\nWritting Json to $jsonFile\n";
 file_put_contents($jsonFile, $json_string);
 echo "\nDone Yaboiii!\n";
-bug("</pre>");  
+dbug("</pre>");  

@@ -1,31 +1,160 @@
 'use strict';
 
-angular.module('angularTubeApp')
+angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider) {
+    $routeProvider
+      .when('/', {
+        templateUrl: 'views/main.html',
+        controller: 'MainCtrl',
+        controllerAs: 'main'
+      })
+      .otherwise({
+        redirectTo: '/'
+      });
+  })
+.filter('filmSearch', function(){
 
-   .controller('MainCtrl', ['$scope', '$interval', '$http', '$anchorScroll', '$location', 
-    function ($scope, $interval, $http, $anchorScroll, $location) {
+  return function(items, s){
+    var filtered = [];
 
-        $scope.debug = false; //Switch to True to show a <pre> with current variable values 
+    if (s.title == "" && s.duration.min == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false) {
+      //No Filters are Set, Return a slice of the entire array.
+      return items.slice(s.perPage * s.page, s.perPage * s.page + s.perPage);
+    };
 
-        $scope.advancedFilters = false;
+    for (var i = items.length - 1; i >= 0; i--) {
 
-        $scope.s = {
-          cast:[],
-          tags:[],
-          castMatch:-1,
-          tagMatch:-1,
-          perPage:12,
-          page:0,
-          duration : {min:0}
+      foundBy = {
+        cast:false,
+        title:false,
+        tag:false,
+        duration:false,
+        later:false
+      }
+
+      found = false;
+      failed = false;
+
+        if (s.later == true) {
+          if (items[i].later === true) {
+            foundBy.later = true;
+            found = true;
+            //console.log("passed Later test.")
+          } else {
+            failed = true;
+            //console.log("FAILED later test.")
+          }
+        } else {
+          //console.log("not testing on later.")
         }
 
-        $scope.f = {
+        //console.log("Later test complete.")
+
+      //Title Search
+      if (s.title.length > 0) {
+        if (items[i].title.toLowerCase().indexOf(s.title.toLowerCase()) > -1) {
+          found = true;
+          foundBy.title = true;
+          console.log("["+i+"]"+"Found by title");
+        } else {
+          failed = true;
+        }
+      };
+
+      //Cast Search
+      //
+/*
+      for (var j = items[i].cast.length - 1; j >= 0; j--) {
+        for (var k = s.cast.length - 1; k >= 0; k--) {
+          //console.log("gonna compare -" + items[i].cast[j].toLowerCase() + "- and -" + s.cast[k].toLowerCase() + "-")
+          if (items[i].cast[j].toLowerCase().indexOf(s.cast[k].toLowerCase()) > -1){
+            found = true;
+            foundBy.cast = true;
+            //console.log("["+i+"]"+" found by cast ------ "+ items[i].cast[j].toLowerCase() + "- and -" + s.cast[k].toLowerCase() + "-");
+          }
+        };
+
+      };
+
+      
+      //Tag Search
+      //
+
+
+      for (var j = items[i].tags.length - 1; j >= 0; j--) {
+        for (var k = s.tags.length - 1; k >= 0; k--) {
+          //console.log("gonna compare -" + items[i].cast[j].toLowerCase() + "- and -" + s.cast[k].toLowerCase() + "-")
+          if (items[i].tags[j].toLowerCase().indexOf(s.tags[k].toLowerCase()) > -1){
+            found = true;
+            foundBy.tag = true;
+            //console.log("["+i+"]"+" found by tags ------ "+ items[i].tags[j].toLowerCase() + "- and -" + s.tags[k].toLowerCase() + "-");
+          }
+        };
+
+      };
+
+*/
+      //check duration
+      if (s.duration.min != 0 && s.duration.min*60 < items[i].duration){  
+          found = true;
+          foundBy.duration = true;
+          //console.log("["+i+"]"+" Found by Duration");
+      }
+
+      
+      if(  
+          (s.title != ""     && foundBy.title == false) ||
+          //(s.tags.length > 0 && foundBy.tag  == false)   ||
+          //(s.cast.length > 0 && foundBy.cast == false)   || 
+          (s.duration.min > 0 && foundBy.duration == false) ||
+          (s.later === true && foundBy.laster == false)
+        )
+      {
+        failed = true;
+          //console.log("["+i+"]"+" Failed the final checks");
+      }
+      //Final Check
+      if (found && !failed){
+        filtered.push(items[i])
+      }
+
+    };
+    if (filtered.length > 0) {
+      return filtered.slice(s.perPage * s.page, s.perPage * s.page + s.perPage);
+    }
+    return false;
+  }
+})
+
+   .controller('MainCtrl', ['$scope', 'filmSearchFilter', '$interval', '$http', '$anchorScroll', '$location', 
+    function ($scope, filmSearchFilter, $interval, $http, $anchorScroll, $location) {
+
+        $scope.debug = true; //Switch to True to show a <pre> with current variable values 
+
+        $scope.advancedFilters = true;
+
+        $scope.s = {
+          title:'',
           cast:[],
           tags:[],
-          title:"",
           castMatch:-1,
           tagMatch:-1,
-          duration : {min:0}
+          duration : {min:0},
+          later:false,
+          perPage:12,
+          page:0
+        }
+
+
+        $scope.f = {
+          title:'',
+          cast:[],
+          tags:[],
+          castMatch:-1,
+          tagMatch:-1,
+          duration : {min:0},
+          later:false,
+          perPage:12,
+          page:0
         }
 
   $scope.applyFilter = function(){
@@ -35,6 +164,7 @@ angular.module('angularTubeApp')
     $scope.s.castMatch      = $scope.f.castMatch;
     $scope.s.tagMatch       = $scope.f.tagMatch;
     $scope.s.duration.min   = $scope.f.duration.min;
+    $scope.s.later          = $scope.f.later;
     $scope.$apply();
   }
 
@@ -76,6 +206,9 @@ $scope.getTags = function(fileName, filmid){
 };
 
 
+  $scope.shuffleDB = function(){
+    $scope.shuffle($scope.filmDB);
+  }
 
   $http.get('./db/filmDB.json')
     .then(function(res) {
@@ -85,9 +218,6 @@ $scope.getTags = function(fileName, filmid){
     console.log(response);
     console.log("Error loading json.");
   });
-
-
-  $scope.debug = true;
 
   $scope.startScreenPreview = function(filmid){
 
@@ -106,6 +236,7 @@ $scope.getTags = function(fileName, filmid){
       $scope.currentScreenshot = shots[i]; 
     }, 500);
   }
+
   $scope.setEdit = function(filmid){
     $scope.editItem = filmid;
     //console.log(filmid);
@@ -131,7 +262,8 @@ $scope.getTags = function(fileName, filmid){
       $http.post('filmDB.php', $scope.filmDB);
   }
   $scope.setStatus = function(text) {
-      $scope.status = text.replace('/media/mephesto/Azul/porn','').replace('/media/mephesto/Scarlett','');
+      $scope.status = $scope.status;
+      //former hardcoded fix for my personal server.
   }
 
   $scope.shuffle = function(o) {
@@ -155,111 +287,4 @@ $scope.getTags = function(fileName, filmid){
 
     
    
-  }]).filter('filmSearch', function(){
-  return function(items, s){
-    var filtered = [];
-    var foundBy = {cast:false,title:false,tag:false,duration:false,later:false};
-    var found = false;
-    var failed = false;
-
-
-    if (s.title == "" && s.duration.min == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false) {
-      //console.log(s);
-      return items.slice(s.perPage * s.page, s.perPage * s.page + s.perPage)
-    };
-
-    for (var i = items.length - 1; i >= 0; i--) {
-      foundBy = {cast:false,title:false,tag:false,duration:false,later:false}
-      found = false;
-      failed = false;
-
-        //console.log("before later test.")
-        if (s.later == true) {
-          if (items[i].later === true) {
-            foundBy.later = true;
-            found = true;
-            //console.log("passed Later test.")
-          } else {
-            failed = true;
-            //console.log("FAILED later test.")
-          }
-        } else {
-            //console.log("not testing on later.")
-        }
-
-        //console.log("after later test.")
-
-      //Title Search
-      if (s.title.length > 0 && items[i].title.toLowerCase().indexOf(s.title.toLowerCase()) > -1) {
-        found = true;
-        foundBy.title = true;
-        //console.log("["+i+"]"+"Found by title");
-      };
-
-      //Cast Search
-      //
-
-      for (var j = items[i].cast.length - 1; j >= 0; j--) {
-        for (var k = s.cast.length - 1; k >= 0; k--) {
-          //console.log("gonna compare -" + items[i].cast[j].toLowerCase() + "- and -" + s.cast[k].toLowerCase() + "-")
-          if (items[i].cast[j].toLowerCase().indexOf(s.cast[k].toLowerCase()) > -1){
-            found = true;
-            foundBy.cast = true;
-            //console.log("["+i+"]"+" found by cast ------ "+ items[i].cast[j].toLowerCase() + "- and -" + s.cast[k].toLowerCase() + "-");
-          }
-        };
-
-      };
-
-      
-      //Tag Search
-      //
-
-
-      for (var j = items[i].tags.length - 1; j >= 0; j--) {
-        for (var k = s.tags.length - 1; k >= 0; k--) {
-          //console.log("gonna compare -" + items[i].cast[j].toLowerCase() + "- and -" + s.cast[k].toLowerCase() + "-")
-          if (items[i].tags[j].toLowerCase().indexOf(s.tags[k].toLowerCase()) > -1){
-            found = true;
-            foundBy.tag = true;
-            //console.log("["+i+"]"+" found by tags ------ "+ items[i].tags[j].toLowerCase() + "- and -" + s.tags[k].toLowerCase() + "-");
-          }
-        };
-
-      };
-
-
-      //check duration
-      if (s.duration.min != 0 && s.duration.min*60 < items[i].duration){  
-          found = true;
-          foundBy.duration = true;
-          //console.log("["+i+"]"+" Found by Duration");
-      }
-
-      
-      if(  
-          (s.title != ""     && foundBy.title == false) ||
-          (s.tags.length > 0 && foundBy.tag  == false)   ||
-          (s.cast.length > 0 && foundBy.cast == false)   || 
-          (s.duration.min > 0 && foundBy.duration == false) ||
-          (s.later === true && foundBy.laster == false)
-        )
-      {
-        failed = true;
-          //console.log("["+i+"]"+" Failed the final checks");
-      }
-      //Final Check
-      if (found && !failed){
-        filtered.push(items[i])
-        //console.log(foundBy);
-          //console.log("["+i+"]"+" Passed the final checks");
-          //console.log(items[i])
-      }
-
-    };
-    if (filtered.length > 0) {
-      return filtered.slice(s.perPage * s.page, s.perPage * s.page + s.perPage);
-    }
-    return false;
-  }
-});
+  }]);
