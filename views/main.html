@@ -5,6 +5,7 @@
   Cast: {{s.cast}} - {{s.castMatch}}
   Tags: {{s.tags}} - {{s.tagMatch}}
   filtered db length {{filteredDB.length}}
+  enableExperimentalFilters -{{enableExperimentalFilters}}
   {{s}}
 
 s.page = {{s.page}}
@@ -14,7 +15,6 @@ s.perPage = {{s.perPage}}
  Filter Parameters
   {{f}}
 </pre>
-
 <div class="row" class="text-center advancedFilters fixPadding">
 
   <div class="col-xs-6 col-md-3" >
@@ -25,7 +25,7 @@ s.perPage = {{s.perPage}}
   </div>
 
   <div class="col-xs-6 col-md-3" >
-    <button class="btn " ng-class="(s.later ? 'btn-primary':'btn-default')" ng-click="s.later = !s.later"> Later? </button>
+    <button class="btn btn-sm" ng-class="(s.later ? 'btn-primary':'btn-default')" ng-click="s.later = !s.later"> Later? </button>
   </div>
 
   <div class="col-xs-6 col-md-3"  ng-show="advancedFilters">
@@ -63,7 +63,7 @@ s.perPage = {{s.perPage}}
   </div>
 
   <div class="col-xs-6 col-md-3">
-    <button ng-click="applyFilter();" class="btn btn-default" title="Apply Filters">
+    <button ng-click="applyFilter();" class="btn btn-sm btn-default" title="Apply Filters">
       <i class="fa fa-check-circle"></i>
     </button>
   </div>
@@ -114,7 +114,7 @@ s.perPage = {{s.perPage}}
 
   <div class="col-sm-12">
     
-    <div ng-repeat="(filmid, film) in filmDB | filmSearch:s">
+    <div ng-repeat="(filmid, film) in filteredDB = (filmDB | filmSearch:s)">
       <div class="col-xs-12 col-md-6 col-lg-4 text-center ">
       
         <div class="embed-responsive embed-responsive-16by9">
@@ -209,7 +209,9 @@ s.perPage = {{s.perPage}}
 
 <div class="row">
   <div class="col-xs-12 text-center">
-    <small>Total Film Count: {{filmDB.length}}</small>
+    <small>Total Film Count: {{filmDB.length}}</small><br> 
+    <button class="btn btn-default btn-xs" ng-click="debug = !debug"><i class="fa fa-bug"></i> Toggle Debug Mode</button>    
+    <button class="btn btn-default btn-xs" ng-click="advancedFilters = !advancedFilters"><i class="fa fa-flask"></i> Toggle Experimental Filters</button>
   </div>
 </div>
 

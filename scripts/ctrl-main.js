@@ -140,9 +140,9 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
    .controller('MainCtrl', ['$scope', 'filmSearchFilter', '$interval', '$http', '$anchorScroll', '$location', 
     function ($scope, filmSearchFilter, $interval, $http, $anchorScroll, $location) {
 
-        $scope.debug = true; //Switch to True to show a <pre> with current variable values 
+        $scope.debug = false; //Switch to True to show a <pre> with current variable values 
 
-        $scope.advancedFilters = true;
+        $scope.advancedFilters = false;
 
         $scope.s = {
           title:'',
