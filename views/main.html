@@ -121,7 +121,8 @@ s.perPage = {{s.perPage}}
 
           <div class="videoBlock embed-responsive-item"
             ng-hide="film.edit==1"
-            style="background-image:url({{film.currentScreenshot}});"  
+            ng-init="film.currentScreenshot = 1"
+            style="background-image:url(screenshots/{{film.hash|limitTo:1:0}}/{{film.hash}}-{{film.currentScreenshot}}.jpg);"  
             ng-init="film.currentScreenshot = film.sshot[0]; film.edit = 0"
             ng-mouseleave="stopScreenPreview(filmid)" 
             ng-mouseover="startScreenPreview(filmid)">

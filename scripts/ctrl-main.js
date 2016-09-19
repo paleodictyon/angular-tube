@@ -235,17 +235,16 @@ $scope.getTags = function(fileName, filmid){
 
     $interval.cancel($scope.intervalPromise);
     var i = 0;
-    var shotsLength = $scope.filteredDB[filmid].sshot.length;
-    var shots = $scope.filteredDB[filmid].sshot;
+    var shotsLength = $scope.filteredDB[filmid].sshot_count;
+    //var shots = $scope.filteredDB[filmid].sshot;
     $scope.intervalPromise = $interval(function(){
       i = i + 1;
 
       if (i == shotsLength) {
         i = 0;
       };
-
-      $scope.filteredDB[filmid].currentScreenshot = shots[i];
-      $scope.currentScreenshot = shots[i]; 
+      $scope.filteredDB[filmid].currentScreenshot = (i+1);
+      //$scope.currentScreenshot = $scope.filteredDB[filmid].currentScreenshot; 
     }, 500);
   }
 
@@ -256,7 +255,7 @@ $scope.getTags = function(fileName, filmid){
 
   $scope.stopScreenPreview = function(filmid){
     $interval.cancel($scope.intervalPromise);
-    $scope.filteredDB[filmid].currentScreenshot = $scope.filteredDB[filmid].sshot[0];
+    $scope.filteredDB[filmid].currentScreenshot = 1;
   }
   
   $scope.pushCast = function(castMember){
