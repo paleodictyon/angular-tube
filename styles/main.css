@@ -48,6 +48,22 @@ h3 {
 .timecode:hover {
   background-color:rgba(0,0,0,.5);
 }
+.rating>i{
+  text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+  color:rgba(255,255,255,.75);
+}
+.rating>.fa-star{
+  color:gold;
+}
+.rating>.fa-star-o{
+  color:rgba(255,255,255,.5);
+}
+.rating>i:hover{
+  color:gold;
+}
+.rating:hover{
+  cursor: pointer;
+}
 
 .leftSideThing {
   min-height:60vh;

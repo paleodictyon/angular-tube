@@ -169,6 +169,15 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
           page:0
         }
 
+        $scope.perRow = 2;
+        $scope.perRowOption = 3;
+
+        $scope.togglePerRow = function(){
+          var tempShow = $scope.perRow;
+          $scope.perRow = $scope.perRowOption;
+          $scope.perRowOption = tempShow;
+        }
+
   $scope.applyFilter = function(){
     $scope.s.title          = $scope.f.title;
     $scope.s.cast           = $scope.f.cast;

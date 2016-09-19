@@ -66,6 +66,20 @@ s.perPage = {{s.perPage}}
     <button ng-click="applyFilter();" class="btn btn-sm btn-default" title="Apply Filters">
       <i class="fa fa-check-circle"></i>
     </button>
+    
+    <button class="btn btn-sm btn-default" ng-click="togglePerRow()">
+      show {{perRowOption}} per row
+    </button>
+
+
+    <button class="btn  btn-sm btn-default" ng-click="saveDB()" title="save to database">
+      <i class="fa fa-save"></i>
+    </button>
+
+    <button class="btn btn-sm btn-default" ng-click="shuffleDB()" title="shuffle database">
+      <i class="fa fa-refresh"></i> 
+    </button>  
+
   </div>
 
 </div>
@@ -115,7 +129,7 @@ s.perPage = {{s.perPage}}
   <div class="col-sm-12">
     
     <div ng-repeat="(filmid, film) in filteredDB = (filmDB | filmSearch:s)">
-      <div class="col-xs-12 col-md-6 col-lg-4 text-center ">
+      <div class="col-xs-12 col-md-6 text-center " ng-class="(perRow==3?'col-lg-4':'col-lg-6')">
       
         <div class="embed-responsive embed-responsive-16by9">
 
@@ -133,6 +147,18 @@ s.perPage = {{s.perPage}}
             </a>
 
             <div class="timecode">
+              <span class="pull-left rating">
+                <i class="fa " ng-class="(film.rating>0?'fa-star':'fa-star-o')"
+                ng-click="film.rating = 1;saveDB();"></i>
+                <i class="fa " ng-class="(film.rating>1?'fa-star':'fa-star-o')"
+                ng-click="film.rating = 2;saveDB();"></i>
+                <i class="fa " ng-class="(film.rating>2?'fa-star':'fa-star-o')"
+                ng-click="film.rating = 3;saveDB();"></i>
+                <i class="fa " ng-class="(film.rating>3?'fa-star':'fa-star-o')"
+                ng-click="film.rating = 4;saveDB();"></i>
+                <i class="fa " ng-class="(film.rating>4?'fa-star':'fa-star-o')"
+                ng-click="film.rating = 5;saveDB();"></i>
+              </span>
               {{filmDuration(film.duration)}}
               <span ng-if="film.watched >= 1"> - {{film.watched}} Plays</span> 
               <button ng-click="setStatus(film.path)" class="btn btn-xs btn-default">
@@ -191,8 +217,8 @@ s.perPage = {{s.perPage}}
 <div class="row fixPadding">
 
   <div class="col-sm-6 hidden-xs text-center">
-    <button class="btn  btn-sm btn-default" ng-click="saveDB()"> Save to Database </button>
-    <button class="btn btn-sm btn-default" ng-click="shuffleDB()"> Shuffle </button>  
+    <button class="btn  btn-sm btn-default" ng-click="saveDB()"> <i class="fa fa-save"></i> Save to Database </button>
+    <button class="btn btn-sm btn-default" ng-click="shuffleDB()"><i class="fa fa-refresh"></i> Shuffle </button>  
   </div>
 
   <div class="col-sm-6 text-center">
