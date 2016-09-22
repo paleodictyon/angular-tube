@@ -159,6 +159,9 @@ s.perPage = {{s.perPage}}
                 <i class="fa " ng-class="(film.rating>4?'fa-star':'fa-star-o')"
                 ng-click="film.rating = 5;saveDB();"></i>
               </span>
+              <span class="pull-left tags" ng-class="(film.tags.length < 5 ? 'tooFewTags':'enoughTags')">
+                <i class="fa fa-tag"></i> {{film.tags.length}} Tags
+              </span>
               {{filmDuration(film.duration)}}
               <span ng-if="film.watched >= 1"> - {{film.watched}} Plays</span> 
               <button ng-click="setStatus(film.path)" class="btn btn-xs btn-default">
@@ -188,7 +191,19 @@ s.perPage = {{s.perPage}}
               </tr>
               <tr>
                   <td>tags</td>
-                  <td><input class="input-sm form-control" ng-list="" ng-model="film.tags"></td>
+                  <td>
+                    <input class="input-sm form-control" ng-list="" ng-model="film.tags">
+                    <p ng-repeat="(tagSet, tagSetValues) in tagWizard" class="text-left">
+                      {{tagSet}} 
+                      <br>
+                      <button class="btn btn-xs addTagButton" 
+                        ng-repeat="tagValue in tagSetValues" 
+                        ng-click="setToggleTag(tagValue, filmid)"
+                        ng-class="(film.tags.includes(tagValue) ? 'btn-info' : 'btn-default')">
+                          {{tagValue}}
+                      </button>
+                    </p>
+                  </td>
               </tr>
               <tr>
                   <td>cast</td>

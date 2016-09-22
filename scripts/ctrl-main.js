@@ -66,7 +66,7 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
         if (items[i].title.toLowerCase().indexOf(s.title.toLowerCase()) > -1) {
           found = true;
           foundBy.title = true;
-          console.log("["+i+"]"+"Found by title");
+          //console.log("["+i+"]"+"Found by title");
         } else {
           failed = true;
         }
@@ -240,6 +240,17 @@ $scope.getTags = function(fileName, filmid){
     console.log("Error loading json.");
   });
 
+  $http.get('./scripts/tag-wizard.json')
+    .then(function(res) {
+        $scope.tagWizard = res.data;
+    }, function errorCallback(response) {
+    console.log("Error loading tag-wizard.json. ");
+    console.log(" If you want " +
+                "to take advantage of this feature, copy the " +
+                "tag-wizard-example.json to tag-wizard.json " + 
+                "and modify as desired.");
+  });
+
   $scope.startScreenPreview = function(filmid){
 
     $interval.cancel($scope.intervalPromise);
@@ -303,6 +314,21 @@ $scope.getTags = function(fileName, filmid){
               return t.m + "m " + t.s + "s"
           return t.s + "s";
       }
+
+  $scope.setToggleTag = function(tagValue,filmid){
+    console.log("toggling tags for "+$scope.filmDB[filmid].title)
+    //console.log("Passed tagValue:"+tagValue)
+    //console.log("Passed filmid:"+filmid)
+    if ($scope.filteredDB[filmid].tags.includes(tagValue)) {
+      //console.log("it's in the tags already");
+      var index = $scope.filteredDB[filmid].tags.indexOf(tagValue);
+      $scope.filteredDB[filmid].tags.splice(index, 1);     
+    } else {
+      //console.log("not in tags yet");
+      $scope.filteredDB[filmid].tags.push(tagValue);
+    }
+    $scope.$apply();
+  }
 
 
     

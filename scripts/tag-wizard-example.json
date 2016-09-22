@@ -1,0 +1,5 @@
+{
+  "Rating": ["Rated G", "Rated PG", "Rated PG13", "Rated R", "Rated NC17", "Unrated"],
+  "Resolution" : ["480p", "720p", "1080p", "4k"],
+  "Video Type" : ["Short", "Film", "Cartoon", "TV Show"]
+}

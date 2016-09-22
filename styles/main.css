@@ -65,6 +65,19 @@ h3 {
   cursor: pointer;
 }
 
+.tags{
+  margin-left:.5em;
+  text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+  color:rgba(255,255,255,.75);
+}
+.tooFewTags{
+  color:red;
+  font-weight: bold;
+}
+.enoughTags{
+  display: none;
+}
+
 .leftSideThing {
   min-height:60vh;
   position:relative;
@@ -153,4 +166,8 @@ a:hover .playButton {
 }
 .advancedFilters .input-group-addon {
   text-transform: uppercase;
+}
+
+.addTagButton{
+  margin-right:3px;
 }
