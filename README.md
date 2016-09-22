@@ -13,3 +13,7 @@ Todo
   - Play video in browser, rather than just providing link
   - tag autocomplete, typeahead?
   - Migrate files I already wrote into Git -DONE
+
+
+Changes
+  - Sept 22, 2016 - *Added Tag Wizard* - A JSON list of favorite tag groups, and values.  cp tag-wizard-example.json to tag-wizard.json to get started.  Tags can be toggled with button click now in addition to typing.
