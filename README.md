@@ -6,13 +6,14 @@ Todo
   - Get rid of PHP Dependency (eventually)
   - Test more
   - Cleanup Code
-  - Fix Screenshot Previews
   - Make CSS Prettier
   - Get better at Git
   - Test in anything other than Chrome on Linux
   - Play video in browser, rather than just providing link
   - tag autocomplete, typeahead?
+  - Save a list of files which had errors so I don't try to get a screenshot from them every time.
   - Migrate files I already wrote into Git -DONE
+  - Fix Screenshot Previews -done
 
 
 Changes

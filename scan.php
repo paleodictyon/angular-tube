@@ -107,10 +107,10 @@ foreach ($iter as $path => $file) {
           if (isset($JSON[$hash]))
           {
             dbug("File found");
-            if (isset($JSON[$hash]['sshots'])) {
-              $JSON[$hash]['sshot_count'] = count($JSON[$hash]['sshots']);
-              $JSON[$hash]['sshots'] = NULL;
-            }
+            //if (isset($JSON[$hash]['sshots'])) {
+            //  $JSON[$hash]['sshot_count'] = count($JSON[$hash]['sshots']);
+            //  $JSON[$hash]['sshots'] = NULL;
+            //}
             $OUTPUT[] = $JSON[$hash];
           } 
           else 
