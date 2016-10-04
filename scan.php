@@ -2,6 +2,8 @@
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+
+
 $i = 1;
 
 $config = array(
@@ -15,7 +17,8 @@ $config = array(
                             ],
   "screenshot_dir"      => "screenshots",
   'root'                => '/media/mephesto/Scarlett/', //Root location to scan
-  'film_database_path'  => 'filmDB.json',
+  'film_database_path'  => 'db/filmDB.json',
+  'error_file_path'     => 'db/errorFiles.json',
   'report_every_n'      => 10, //echo output after every nth item.
   'fileExtensions'      => "3gp,amv,avi,f4v,flv,gifv,".
                            "m4p,m4v,mkv,mov,mp2,mp4,mpe,mpeg,mpg,mpv,".
@@ -24,24 +27,33 @@ $config = array(
 );
 
 $exts = explode(",", $config['fileExtensions']);
-//require (include) specified file, but store it in a variable.
-function requireToVar($file){
-  ob_start();
-  require($file);
-  return ob_get_clean();
+
+function outputJson($array, $filename){
+  $jsonString = json_encode($array);
+  echo fancyOutput("Writing ".count($array)." items to json file: $filename");
+  file_put_contents($filename, $jsonString);
+  echo fancyOutput("Write to $filename complete!");
 }
 
-// include specified file, but store it in a variable.
-function includeToVar($file){
+function loadJSON($file){
   ob_start();
   include($file);
-  return ob_get_clean();
+  $string = ob_get_clean();
+  return json_decode($string);
 }
 
-//PHP Require, but store in $jsonRaw instead of dumping.
-//Basically gather up the exisitng FilmDB.
-$jsonRaw = includeToVar($config['film_database_path']);
-$jsonRaw = json_decode($jsonRaw);
+function fancyOutput($msg = ""){
+  $string = "";
+
+  for($i=0;$i<80;$i++){
+    $string.="-";
+  }
+  return "\n$string\n| $msg\n$string";
+}
+
+// gather up the exisitng FilmDB.
+$jsonRaw = loadJSON($config['film_database_path']);
+
 
 if (is_array($jsonRaw)) {
   //iterate through filmDB
@@ -49,6 +61,20 @@ if (is_array($jsonRaw)) {
     $JSON[$j->hash] = $j;
   }
 }
+
+echo fancyOutput("Loaded ".count($JSON)." existing films.");
+
+// gather up the exisitng error list.
+$jsonRaw = loadJSON($config['error_file_path']);
+
+if (is_array($jsonRaw)) {
+  //iterate through filmDB
+  foreach ($jsonRaw as $j){
+    $errorPaths[] = $j;
+  }
+}
+
+echo fancyOutput("Loaded ".count($errorPaths)." known error films.");
 
 //
 // NOTE:  REQUIRES PHPFFMPEG WHICH I WAS INCLUDING WITH COMPOSER.
@@ -99,7 +125,7 @@ foreach ($iter as $path => $file) {
     {
       $pathExplosion = explode(".", $path);
       $ext = end($pathExplosion);
-      if(array_search($ext, $exts)){
+      if(array_search($ext, $exts) && !array_search($path, $errorPaths)){
         $sshot = null;
         $mime = finfo_file($finfo,$path);
         if (substr($mime, 0,5) == "video")
@@ -120,15 +146,10 @@ foreach ($iter as $path => $file) {
             $i++;
 
             if( $i % $config['report_every_n'] == 0)
-              echo "[$i] $path\n";
+              echo "\n[$i] $path";
 
             if($i % $config['write_temp_every_n'] == 0){
-              $json_string = json_encode($OUTPUT);
-              $jsonFile = "filmDB.json.temp";
-              echo "\nWritting Json to $jsonFile\n";
-              file_put_contents($jsonFile, $json_string);
-              echo "\nDone Writing Temp!\n";
-              dbug("</pre>");  
+              outputJson($OUTPUT, $config['film_database_path'] . ".temp");
             }
 
             $duration = (int)$ffprobe
@@ -179,13 +200,16 @@ foreach ($iter as $path => $file) {
         }
       }
     }
-  } catch (Exception $e) { echo 'Caught exception: ',  $e->getMessage(), "\n"; }
+  } catch (Exception $e) { 
+    $errorPaths[] = $path;
+    echo "\n[Error #".count($errorPaths)."] Caught exception: ".  $e->getMessage(). "\n"; 
+  }
 }
 
-//var_dump($paths);
-$json_string = json_encode($OUTPUT);
-$jsonFile = "filmDB.json";
-echo "\nWritting Json to $jsonFile\n";
-file_put_contents($jsonFile, $json_string);
-echo "\nDone Yaboiii!\n";
+outputJson($OUTPUT, $config['film_database_path']);
+
+outputJson($errorPaths, $config['error_file_path']);
+
 dbug("</pre>");  
+
+echo "\n";
