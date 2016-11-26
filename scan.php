@@ -192,6 +192,7 @@ foreach ($iter as $path => $file) {
               "filename"=>  $filename, 
               "duration"=>  $duration, 
               "filesize"=>  $filesize,
+              "mtime"   =>  filemtime($path),
               "path"    =>  $path,
               "mime"    =>  $mime, 
               "hash"    =>  $hash

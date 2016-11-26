@@ -10,7 +10,11 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
       .otherwise({
         redirectTo: '/'
       });
-  })
+  }).config( 
+    function( $compileProvider )
+    {   
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|data):/);
+    })
 .filter('filmSearch', function(){
 
   return function(items, s){
@@ -21,13 +25,15 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
         title:false,
         tag:false,
         duration:false,
-        later:false
+        later:false,
+        unwatched:false,
+        new:false
       }
 
     var found = false;
     var failed = false;
 
-    if (s.title == "" && s.duration.min == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false) {
+    if (s.title == "" && s.duration.min == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false && s.unwatched == false && s.new == false) {
       //No Filters are Set, Return a slice of the entire array.
       console.log("No Filters Set");
       return items.slice(s.perPage * s.page, s.perPage * s.page + s.perPage);
@@ -40,7 +46,9 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
         title:false,
         tag:false,
         duration:false,
-        later:false
+        later:false,
+        unwatched:false,
+        new:false
       }
 
       found = false;
@@ -59,7 +67,33 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
           //console.log("not testing on later.")
         }
 
-        //console.log("Later test complete.")
+        if (s.unwatched == true) {
+          if (typeof(items[i].watched) === "undefined" || items[i].watched < 1) {
+            foundBy.unwatched = true;
+            found = true;
+            //console.log("passed unwatched test.")
+          } else {
+            failed = true;
+            //console.log("FAILED unwatched test.")
+          }
+        } else {
+          //console.log("not testing on unwatched.")
+        }
+
+        if (s.new == true) {
+          if (items[i].mtime > (Date.now()/1000) - (60*60*24*7)) { //one week
+            foundBy.new = true;
+            found = true;
+            //console.log("passed New test.")
+          } else {
+            failed = true;
+            //console.log("FAILED new test.")
+          }
+        } else {
+          //console.log("not testing on new.")
+        }
+
+        //console.log("New test complete.")
 
       //Title Search
       if (s.title.length > 0) {
@@ -118,7 +152,9 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
           //(s.tags.length > 0 && foundBy.tag  == false)   ||
           //(s.cast.length > 0 && foundBy.cast == false)   || 
           (s.duration.min > 0 && foundBy.duration == false) ||
-          (s.later === true && foundBy.laster == false)
+          (s.later === true && foundBy.later == false)||
+          (s.unwatched === true && foundBy.unwatched == false)||
+          (s.new === true && foundBy.new == false)
         )
       {
         failed = true;
@@ -152,6 +188,8 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
           tagMatch:-1,
           duration : {min:0},
           later:false,
+          unwatched:false,
+          new:false,
           perPage:12,
           page:0
         }
@@ -165,6 +203,8 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
           tagMatch:-1,
           duration : {min:0},
           later:false,
+          unwatched:false,
+          new:false,
           perPage:12,
           page:0
         }
@@ -185,7 +225,9 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
     $scope.s.castMatch      = $scope.f.castMatch;
     $scope.s.tagMatch       = $scope.f.tagMatch;
     $scope.s.duration.min   = $scope.f.duration.min;
-    $scope.s.later          = $scope.f.later;
+    //$scope.s.later          = $scope.f.later;
+    //$scope.s.unwatched      = $scope.f.unwatched;
+    //$scope.s.new            = $scope.f.new;
     $scope.$apply();
   }
 
@@ -301,6 +343,19 @@ $scope.getTags = function(fileName, filmid){
       for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
       return o;
   }
+
+  $scope.playlist = [];
+
+  $scope.addToPlaylist = function(fileURL){
+    $scope.playlist.push(fileURL);
+    var playlistContent = "data:audio/mpegurl;charset=utf-8,";
+    for (var i = 0; i < $scope.playlist.length; i++) {
+      playlistContent += $scope.playlist[i] + "\n"; 
+    }
+    $scope.playlistURI = encodeURI(playlistContent);
+  }
+
+  $scope.playlistURI = "#";
 
   $scope.filmDuration = function(fD) {
           if (fD < 1) return "";

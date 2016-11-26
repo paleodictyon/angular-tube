@@ -12,8 +12,11 @@ s.page = {{s.page}}
 
 s.perPage = {{s.perPage}}
 
- Filter Parameters
+ Filter Parameters f
   {{f}}
+
+ Filter Parameters s
+  {{s}}
 </pre>
 <div class="row" class="text-center advancedFilters fixPadding">
 
@@ -26,12 +29,14 @@ s.perPage = {{s.perPage}}
 
   <div class="col-xs-6 col-md-3" >
     <button class="btn btn-sm" ng-class="(s.later ? 'btn-primary':'btn-default')" ng-click="s.later = !s.later"> Later? </button>
+    <button class="btn btn-sm" ng-class="(s.new ? 'btn-primary':'btn-default')" ng-click="s.new = !s.new"> New? </button>
+    <button class="btn btn-sm" ng-class="(s.unwatched ? 'btn-primary':'btn-default')" ng-click="s.unwatched = !s.unwatched"> Unwatched? <i class="fa fa-eye-slash"></i> </button>
   </div>
 
   <div class="col-xs-6 col-md-3"  ng-show="advancedFilters">
     <div class="input-group  input-group-sm">
       <span class="input-group-addon">Cast</span>
-      <input type="text" class="form-control" ng-model="s.cast" ng-list >
+      <input type="text" class="form-control" ng-model="f.cast" ng-list >
       <span class="input-group-addon" ng-click="f.castMatch = 0 - f.castMatch" ng-show="f.castMatch == -1" >
         MATCH<br>ANY
       </span>
@@ -44,7 +49,7 @@ s.perPage = {{s.perPage}}
 
     <div class="input-group  input-group-sm">
       <span class="input-group-addon">Tags</span>
-      <input type="text" class="form-control" ng-model="s.tags" ng-list >
+      <input type="text" class="form-control" ng-model="f.tags" ng-list >
         <span class="input-group-addon" ng-click="f.tagMatch = 0 - f.tagMatch" ng-show="f.tagMatch == -1" >
           MATCH<br>ANY
         </span>
@@ -176,6 +181,10 @@ s.perPage = {{s.perPage}}
               <button ng-click="film.later=!film.later;saveDB();" class="btn btn-xs" ng-class="(film.later?'btn-primary':'btn-default')">  
                 <i class="fa fa-clock-o"></i>
               </button>
+              <button ng-click="addToPlaylist(film.path)"  class="btn btn-xs btn-default">
+                <i class="fa fa-plus-square"></i>
+                <i class="fa fa-list"></i>
+              </button>
               <button ng-click="film.edit = 1" class="btn btn-xs btn-default">
                 <i class="fa fa-pencil"></i>
               </button>
@@ -211,7 +220,10 @@ s.perPage = {{s.perPage}}
               </tr>
               <tr>
                   <td>rating</td>
-                  <td><input class="input-sm form-control" ng-model="film.rating"></td>
+                  <td><input class="input-sm form-control" type="number" min="0" max="5" ng-model="film.rating"></td>
+              </tr>
+              <tr>
+                  <td colspan="2">Added on {{film.mtime * 1000 | date:'MMM d, yyyy'}}</td>
               </tr>
               <tr>
                 <td colspan="2">
@@ -254,6 +266,7 @@ s.perPage = {{s.perPage}}
     <small>Total Film Count: {{filmDB.length}}</small><br> 
     <button class="btn btn-default btn-xs" ng-click="debug = !debug"><i class="fa fa-bug"></i> Toggle Debug Mode</button>    
     <button class="btn btn-default btn-xs" ng-click="advancedFilters = !advancedFilters"><i class="fa fa-flask"></i> Toggle Experimental Filters</button>
+    <a class="btn btn-default btn-xs" ng-href="{{playlistURI}}" download="example.m3u">Download Playlist</a>
   </div>
 </div>
 
