@@ -188,6 +188,9 @@ s.perPage = {{s.perPage}}
               <button ng-click="film.edit = 1" class="btn btn-xs btn-default">
                 <i class="fa fa-pencil"></i>
               </button>
+              <a ng-href="{{singleFilePlaylist(film.path)}}"  ng-click="film.watched = film.watched +1; saveDB()"  download="tmp.m3u" class="btn btn-xs btn-default">
+                <i class="fa fa-play-circle"></i>
+              </a>
             </div>
 
           </div>

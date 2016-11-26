@@ -344,6 +344,10 @@ $scope.getTags = function(fileName, filmid){
       return o;
   }
 
+  $scope.singleFilePlaylist = function(filmURL){
+    return encodeURI('data:audio/mpegurl;charset=utf-8,'+filmURL);
+  }
+
   $scope.playlist = [];
 
   $scope.addToPlaylist = function(fileURL){
