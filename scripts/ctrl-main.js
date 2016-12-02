@@ -33,7 +33,7 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
     var found = false;
     var failed = false;
 
-    if (s.title == "" && s.duration.min == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false && s.unwatched == false && s.new == false) {
+    if (s.title == "" && s.hide == "" && s.duration.min == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false && s.unwatched == false && s.new == false) {
       //No Filters are Set, Return a slice of the entire array.
       console.log("No Filters Set");
       return items.slice(s.perPage * s.page, s.perPage * s.page + s.perPage);
@@ -103,6 +103,22 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
           //console.log("["+i+"]"+"Found by title");
         } else {
           failed = true;
+        }
+      };
+
+      //Hide Search
+      if (s.hide.length > 0) {
+        var hiddenTerms = s.hide.split(" ");
+        for (var termy = hiddenTerms.length - 1; termy >= 0; termy--) {
+          if (
+              items[i].title.toLowerCase().indexOf(hiddenTerms[termy].toLowerCase()) > -1
+              ||
+              items[i].path.toLowerCase().indexOf(hiddenTerms[termy].toLowerCase()) > -1
+          ) {
+            failed = true;
+          } else {
+            found = true;
+          }
         }
       };
 
@@ -182,6 +198,7 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
 
         $scope.s = {
           title:'',
+          hide:'',
           cast:[],
           tags:[],
           castMatch:-1,
@@ -197,6 +214,7 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
 
         $scope.f = {
           title:'',
+          hide:'',
           cast:[],
           tags:[],
           castMatch:-1,
@@ -220,6 +238,7 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
 
   $scope.applyFilter = function(){
     $scope.s.title          = $scope.f.title;
+    $scope.s.hide           = $scope.f.hide;
     $scope.s.cast           = $scope.f.cast;
     $scope.s.tags           = $scope.f.tags;
     $scope.s.castMatch      = $scope.f.castMatch;
@@ -335,7 +354,7 @@ $scope.getTags = function(fileName, filmid){
       $http.post('filmDB.php', $scope.filmDB);
   }
   $scope.setStatus = function(text) {
-      $scope.status = $scope.status;
+      $scope.status = text;
       //former hardcoded fix for my personal server.
   }
 

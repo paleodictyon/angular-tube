@@ -26,6 +26,12 @@ s.perPage = {{s.perPage}}
       <input type="text" class="form-control" ng-model="f.title" >
     </div>
   </div>
+  <div class="col-xs-6 col-md-3" >
+    <div class="input-group  input-group-sm">
+      <span class="input-group-addon">Hide</span>
+      <input type="text" class="form-control" ng-model="f.hide" >
+    </div>
+  </div>
 
   <div class="col-xs-6 col-md-3" >
     <button class="btn btn-sm" ng-class="(s.later ? 'btn-primary':'btn-default')" ng-click="s.later = !s.later"> Later? </button>
@@ -181,7 +187,7 @@ s.perPage = {{s.perPage}}
               <button ng-click="film.later=!film.later;saveDB();" class="btn btn-xs" ng-class="(film.later?'btn-primary':'btn-default')">  
                 <i class="fa fa-clock-o"></i>
               </button>
-              <button ng-click="addToPlaylist(film.path)"  class="btn btn-xs btn-default">
+              <button ng-click="addToPlaylist(film.path); film.watched = film.watched +1;"  class="btn btn-xs btn-default">
                 <i class="fa fa-plus-square"></i>
                 <i class="fa fa-list"></i>
               </button>
@@ -275,7 +281,7 @@ s.perPage = {{s.perPage}}
 
 <pre ng-show="false">{{s}}</pre>
 
-<div class="statusBar" ng-init="status = ''">{{status}}</div>
+<div ng-show="status!='hidden'" class="statusBar" ng-init="status = 'hidden'"><button class="btn btn-xs btn-default" title="hide status bar" ng-click="status='hidden'"><i class="fa fa-times"></i></button> {{status}} </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="tagModal">
   <div style="position:fixed;left:0;top:0">
