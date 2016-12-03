@@ -177,3 +177,9 @@ a:hover .playButton {
   color: white;
   border-bottom: 2px solid rgba(255,255,255,.5);
 }
+.unclutter{
+  opacity: .1;
+}
+.unclutter:hover{
+  opacity: 1;
+}

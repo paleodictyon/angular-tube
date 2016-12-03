@@ -68,7 +68,10 @@ s.perPage = {{s.perPage}}
 
   <div class="col-xs-6 col-md-3">
     <div class="input-group  input-group-sm">
-      <input type="text" class="form-control" ng-model="f.duration.min"  ng-init="f.duration.min=0" >
+      <span class="input-group-addon">Length</span>
+      <input type="text" class="form-control text-center" ng-model="f.duration.min"  ng-init="f.duration.min=0" >
+      <span class="input-group-addon">to</span>
+      <input type="text" class="form-control text-center" ng-model="f.duration.max"  ng-init="f.duration.max=0" >
       <span class="input-group-addon">Mins</span>
     </div>
   </div>
@@ -79,7 +82,12 @@ s.perPage = {{s.perPage}}
     </button>
     
     <button class="btn btn-sm btn-default" ng-click="togglePerRow()">
-      show {{perRowOption}} per row
+      showing {{perRow}} per row
+    </button>
+
+
+    <button class="btn  btn-sm btn-default" ng-click="unclutter=!unclutter" title="Unclutter the interface">
+      <i class="fa fa-sliders"></i> {{(unclutter?"Show":"Hide")}} Video Controls
     </button>
 
 
@@ -140,7 +148,7 @@ s.perPage = {{s.perPage}}
   <div class="col-sm-12">
     
     <div ng-repeat="(filmid, film) in filteredDB = (filmDB | filmSearch:s)">
-      <div class="col-xs-12 col-md-6 text-center " ng-class="(perRow==3?'col-lg-4':'col-lg-6')">
+      <div class="col-xs-12 text-center " ng-class="perRowClass[perRow]">
       
         <div class="embed-responsive embed-responsive-16by9">
 
@@ -157,7 +165,7 @@ s.perPage = {{s.perPage}}
               <i class="fa fa-play playButton" ng-hide="true"></i>
             </a>
 
-            <div class="timecode">
+            <div class="timecode" ng-class="(unclutter ? 'unclutter':'')">
               <span class="pull-left rating">
                 <i class="fa " ng-class="(film.rating>0?'fa-star':'fa-star-o')"
                 ng-click="film.rating = 1;saveDB();"></i>

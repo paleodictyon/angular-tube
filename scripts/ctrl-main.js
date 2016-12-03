@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider) {
+angular.module('angularTubeApp', ['ngRoute', 'cfp.hotkeys'])  .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -33,7 +33,7 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
     var found = false;
     var failed = false;
 
-    if (s.title == "" && s.hide == "" && s.duration.min == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false && s.unwatched == false && s.new == false) {
+    if (s.title == "" && s.hide == "" && s.duration.min == 0  && s.duration.max == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false && s.unwatched == false && s.new == false) {
       //No Filters are Set, Return a slice of the entire array.
       console.log("No Filters Set");
       return items.slice(s.perPage * s.page, s.perPage * s.page + s.perPage);
@@ -155,19 +155,25 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
       };
 
 */
-      //check duration
-      if (s.duration.min != 0 && s.duration.min*60 < items[i].duration){  
+      if(s.duration.min > 0){
+        if (s.duration.min*60 <= items[i].duration) {
           found = true;
           foundBy.duration = true;
-          //console.log("["+i+"]"+" Found by Duration");
+        } else { failed = true; }
       }
 
-      
+      if(s.duration.max > 0){
+        if (s.duration.max*60 >= items[i].duration) {
+          found = true;
+          foundBy.duration = true;
+        } else { failed = true; }
+      }
+
       if(  
           (s.title != ""     && foundBy.title == false) ||
           //(s.tags.length > 0 && foundBy.tag  == false)   ||
           //(s.cast.length > 0 && foundBy.cast == false)   || 
-          (s.duration.min > 0 && foundBy.duration == false) ||
+          //(s.duration.min > 0 && foundBy.duration == false) ||
           (s.later === true && foundBy.later == false)||
           (s.unwatched === true && foundBy.unwatched == false)||
           (s.new === true && foundBy.new == false)
@@ -189,8 +195,8 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
   }
 })
 
-   .controller('MainCtrl', ['$scope', 'filmSearchFilter', '$interval', '$http', '$anchorScroll', '$location', 
-    function ($scope, filmSearchFilter, $interval, $http, $anchorScroll, $location) {
+   .controller('MainCtrl', ['$scope', 'filmSearchFilter', '$interval', '$http', '$anchorScroll', '$location', 'hotkeys',
+    function ($scope, filmSearchFilter, $interval, $http, $anchorScroll, $location, hotkeys) {
 
         $scope.debug = false; //Switch to True to show a <pre> with current variable values 
 
@@ -203,7 +209,7 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
           tags:[],
           castMatch:-1,
           tagMatch:-1,
-          duration : {min:0},
+          duration : {min:0, max:0},
           later:false,
           unwatched:false,
           new:false,
@@ -219,21 +225,48 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
           tags:[],
           castMatch:-1,
           tagMatch:-1,
-          duration : {min:0},
+          duration : {min:0, max:0},
           later:false,
           unwatched:false,
           new:false,
           perPage:12,
           page:0
         }
+        $scope.unclutter = true;
+
+        $scope.perRowClass = [];
+        $scope.perRowClass[1] = "col-md-12";
+        $scope.perRowClass[2] = "col-md-6";
+        $scope.perRowClass[3] = "col-md-4";
+        $scope.perRowClass[4] = "col-md-3";
 
         $scope.perRow = 2;
-        $scope.perRowOption = 3;
+        $scope.perRowMax = 4;
+
+        hotkeys.add({
+          combo: 'right',
+          description: 'Go to next page',
+          callback: function() {
+            $scope.s.page += 1;
+          }
+        });
+
+        hotkeys.add({
+          combo: 'left',
+          description: 'Go to Previous page',
+          callback: function() {
+            if ($scope.s.page > 0) {
+              $scope.s.page -= 1;
+            }
+          }
+        });
 
         $scope.togglePerRow = function(){
-          var tempShow = $scope.perRow;
-          $scope.perRow = $scope.perRowOption;
-          $scope.perRowOption = tempShow;
+          if ($scope.perRow < $scope.perRowMax) {
+            $scope.perRow += 1;
+          } else {
+            $scope.perRow = 1;
+          }
         }
 
   $scope.applyFilter = function(){
@@ -244,6 +277,7 @@ angular.module('angularTubeApp', ['ngRoute'])  .config(function ($routeProvider)
     $scope.s.castMatch      = $scope.f.castMatch;
     $scope.s.tagMatch       = $scope.f.tagMatch;
     $scope.s.duration.min   = $scope.f.duration.min;
+    $scope.s.duration.max   = $scope.f.duration.max;
     //$scope.s.later          = $scope.f.later;
     //$scope.s.unwatched      = $scope.f.unwatched;
     //$scope.s.new            = $scope.f.new;
