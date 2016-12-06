@@ -240,7 +240,7 @@ angular.module('angularTubeApp', ['ngRoute', 'cfp.hotkeys'])  .config(function (
         $scope.perRowClass[3] = "col-md-4";
         $scope.perRowClass[4] = "col-md-3";
 
-        $scope.perRow = 2;
+        $scope.perRow = 3;
         $scope.perRowMax = 4;
 
         hotkeys.add({
