@@ -2,6 +2,7 @@
 
 body {
   padding: 0;
+  padding-bottom:47px;
 }
 
 h3 {
@@ -137,6 +138,7 @@ a:hover .playButton {
 .videoBlock {
   background-size:cover;
   background-position:center center;
+  transition: background-image .25s;
 }
 .videoBlock > a {
   height:100%; 
@@ -182,4 +184,58 @@ a:hover .playButton {
 }
 .unclutter:hover{
   opacity: 1;
+}
+
+.navbar{
+  height:45px!important;
+}
+.sidebar{
+  background-color:#222222;
+    margin: 0;
+    top: 0;
+    left: -1000px;
+    opacity: 0;
+    height:100vh;
+    position: fixed;
+    border-right:2px solid #464545;
+    z-index: 9001;
+    padding:2em;
+    overflow-y: scroll;
+    transition:left .25s;
+}
+.sidebar > .input-group, .sidebar > .half-width-button{
+  margin-bottom:.25em;
+}
+
+.sidebar.sidebar-visible{
+  left:0;
+  opacity: 1;
+}
+body.sidebar-visible{
+  overflow: hidden;
+}
+
+.half-width-button{
+  width:49%
+}
+.sidebarBackgroundHide{
+  background-color:rgba(0,0,0,.5);
+  height:100%;
+  width:100%;
+  overflow: hidden;
+  top:0;
+  left:0;
+  position: fixed;
+  transition:all .5s;
+}
+.topBar{
+  background-color:#111;
+  border-bottom:1px solid black;
+  margin-bottom:.5em;
+  padding:.2em;
+}
+.bottomBar{
+  padding-top:.75em;
+  background-color:rgba(0,0,0,.85);
+  border-top:2px solid rgba(0,0,0,.95);
 }

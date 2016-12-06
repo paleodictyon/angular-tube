@@ -244,6 +244,14 @@ angular.module('angularTubeApp', ['ngRoute', 'cfp.hotkeys'])  .config(function (
         $scope.perRowMax = 4;
 
         hotkeys.add({
+          combo: 'd',
+          description: 'Go to next page',
+          callback: function() {
+            $scope.s.page += 1;
+          }
+        });
+
+        hotkeys.add({
           combo: 'right',
           description: 'Go to next page',
           callback: function() {
@@ -261,6 +269,35 @@ angular.module('angularTubeApp', ['ngRoute', 'cfp.hotkeys'])  .config(function (
           }
         });
 
+        hotkeys.add({
+          combo: 'a',
+          description: 'Go to Previous page',
+          callback: function() {
+            if ($scope.s.page > 0) {
+              $scope.s.page -= 1;
+            }
+          }
+        });
+
+
+        hotkeys.add({
+          combo: 'w',
+          description: 'Increase per page',
+          callback: function() {
+            $scope.s.perPage += 1;
+          }
+        });
+
+        hotkeys.add({
+          combo: 's',
+          description: 'fewer per page',
+          callback: function() {
+            if ($scope.s.perPage > 0) {
+              $scope.s.perPage -= 1;
+            }
+          }
+        });
+
         $scope.togglePerRow = function(){
           if ($scope.perRow < $scope.perRowMax) {
             $scope.perRow += 1;
@@ -270,6 +307,7 @@ angular.module('angularTubeApp', ['ngRoute', 'cfp.hotkeys'])  .config(function (
         }
 
   $scope.applyFilter = function(){
+    $scope.sidebarVis = false;
     $scope.s.title          = $scope.f.title;
     $scope.s.hide           = $scope.f.hide;
     $scope.s.cast           = $scope.f.cast;

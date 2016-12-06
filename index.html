@@ -11,47 +11,12 @@
 
     <link rel="stylesheet" href="styles/main.css">
   </head>
-  <body ng-app="angularTubeApp">
+  <body ng-app="angularTubeApp"  ng-class="sidebarVis">
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
-    <div class="header"  ng-hide="true">
-      <div class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-          <div class="navbar-header">
-
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#js-navbar-collapse">
-              <span class="sr-only">Toggle navigation</span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </button>
-
-            <a class="navbar-brand" href="#/">vangular</a>
-          </div>
-
-          <div class="collapse navbar-collapse" id="js-navbar-collapse">
-
-            <ul class="nav navbar-nav">
-              <li class="active"><a href="#/">Home</a></li>
-              <li><a ng-href="#/about">About</a></li>
-              <li><a ng-href="#/">Contact</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="container-fluid">
     <div ng-view=""></div>
-    </div>
-
-    <div class="footer">
-      <div class="container-fluid">
-        <p>Powered by <a href="http://github.com/paleodictyon/angular-tube"><i class="fa fa-github"></i>/angular-tube</a>.</p>
-      </div>
-    </div>
 
     <script src="./scripts/jquery-2.2.4.min.js"></script>
     <script src="./scripts/bootstrap-3.3.7.min.js"></script>

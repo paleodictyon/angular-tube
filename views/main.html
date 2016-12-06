@@ -18,314 +18,320 @@ s.perPage = {{s.perPage}}
  Filter Parameters s
   {{s}}
 </pre>
-<div class="row" class="text-center advancedFilters fixPadding">
 
-  <div class="col-xs-6 col-md-3" >
-    <div class="input-group  input-group-sm">
-      <span class="input-group-addon">Path</span>
-      <input type="text" class="form-control" ng-model="f.title" >
-    </div>
-  </div>
-  <div class="col-xs-6 col-md-3" >
-    <div class="input-group  input-group-sm">
-      <span class="input-group-addon">Hide</span>
-      <input type="text" class="form-control" ng-model="f.hide" >
-    </div>
-  </div>
-
-  <div class="col-xs-6 col-md-3" >
-    <button class="btn btn-sm" ng-class="(s.later ? 'btn-primary':'btn-default')" ng-click="s.later = !s.later"> Later? </button>
-    <button class="btn btn-sm" ng-class="(s.new ? 'btn-primary':'btn-default')" ng-click="s.new = !s.new"> New? </button>
-    <button class="btn btn-sm" ng-class="(s.unwatched ? 'btn-primary':'btn-default')" ng-click="s.unwatched = !s.unwatched"> Unwatched? <i class="fa fa-eye-slash"></i> </button>
-  </div>
-
-  <div class="col-xs-6 col-md-3"  ng-show="advancedFilters">
-    <div class="input-group  input-group-sm">
-      <span class="input-group-addon">Cast</span>
-      <input type="text" class="form-control" ng-model="f.cast" ng-list >
-      <span class="input-group-addon" ng-click="f.castMatch = 0 - f.castMatch" ng-show="f.castMatch == -1" >
-        MATCH<br>ANY
-      </span>
-      <span class="input-group-addon" ng-click="f.castMatch = 0 - f.castMatch" ng-show="f.castMatch == 1" >
-        <strong>MATCH<br>ALL</strong>
-      </span>
-    </div>
-  </div>
-  <div class="col-xs-6  col-md-3"  ng-show="advancedFilters">
-
-    <div class="input-group  input-group-sm">
-      <span class="input-group-addon">Tags</span>
-      <input type="text" class="form-control" ng-model="f.tags" ng-list >
-        <span class="input-group-addon" ng-click="f.tagMatch = 0 - f.tagMatch" ng-show="f.tagMatch == -1" >
-          MATCH<br>ANY
-        </span>
-        <span class="input-group-addon" ng-click="f.tagMatch = 0 - f.tagMatch" ng-show="f.tagMatch == 1" >
-          <strong>MATCH<BR>ALL</strong>
-        </span>
-    </div>
-
-  </div>
-
-  <div class="col-xs-6 col-md-3">
-    <div class="input-group  input-group-sm">
-      <span class="input-group-addon">Length</span>
-      <input type="text" class="form-control text-center" ng-model="f.duration.min"  ng-init="f.duration.min=0" >
-      <span class="input-group-addon">to</span>
-      <input type="text" class="form-control text-center" ng-model="f.duration.max"  ng-init="f.duration.max=0" >
-      <span class="input-group-addon">Mins</span>
-    </div>
-  </div>
-
-  <div class="col-xs-6 col-md-3">
-    <button ng-click="applyFilter();" class="btn btn-sm btn-default" title="Apply Filters">
-      <i class="fa fa-check-circle"></i>
-    </button>
-    
-    <button class="btn btn-sm btn-default" ng-click="togglePerRow()">
-      showing {{perRow}} per row
-    </button>
+<div class="container-fluid">
+  <div class="sidebar col-xs-8 col-md-6 col-lg-4" ng-init="sidebarVis = false;" ng-class="sidebarVis">
+      <h3>Video Filters</h3>
+      <div class="input-group ">
+        <span class="input-group-addon">Path</span>
+        <input type="text" class="form-control" ng-model="f.title" >
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">Hide</span>
+        <input type="text" class="form-control" ng-model="f.hide" >
+      </div>
+      <div class="input-group">
+        <span class="input-group-addon">Filter by Length</span>
+        <input type="text" class="form-control text-center" ng-model="f.duration.min"  ng-init="f.duration.min=0" >
+        <span class="input-group-addon">to</span>
+        <input type="text" class="form-control text-center" ng-model="f.duration.max"  ng-init="f.duration.max=0" >
+        <span class="input-group-addon">Mins</span>
+      </div>
+        <button class="btn btn-default half-width-button" ng-class="(s.later ? 'btn-primary':'btn-default')" ng-click="s.later = !s.later"> 
+          Marked "Later" 
+        </button>
+        <button class="btn btn-default half-width-button" ng-class="(s.new ? 'btn-primary':'btn-default')" ng-click="s.new = !s.new">  Added in Last 2 Weeks </button> 
+        <button class="btn btn-default half-width-button" ng-class="(s.unwatched ? 'btn-primary':'btn-default')" ng-click="s.unwatched = !s.unwatched"> Unwatched <i class="fa fa-eye-slash"></i> </button>
 
 
-    <button class="btn  btn-sm btn-default" ng-click="unclutter=!unclutter" title="Unclutter the interface">
-      <i class="fa fa-sliders"></i> {{(unclutter?"Show":"Hide")}} Video Controls
-    </button>
-
-
-    <button class="btn  btn-sm btn-default" ng-click="saveDB()" title="save to database">
-      <i class="fa fa-save"></i>
-    </button>
-
-    <button class="btn btn-sm btn-default" ng-click="shuffleDB()" title="shuffle database">
-      <i class="fa fa-refresh"></i> 
-    </button>  
-
-  </div>
-
-</div>
-
-
-<div class="row" id="MeatAndPotatos">
-
-  <div ng-hide="true" ng-init="editItem = -1" class="col-xs-6 hidden-xs leftSideThing">
-    <div class="leftPreview"  ng-class="editItem == -1 ? '' : 'editingBackground' " style="background-image:url({{currentScreenshot}}); "></div>
-    <div ng-show="editItem != -1" style="position:absolute;top:0;left:0;">
-
-      <table class="table table-condensed">
-
-        <tr>
-          <td>title</td>
-          <td><input class="input-sm form-control" ng-model="filteredDB[editItem].title"></td>
-        </tr>
-
-        <tr>
-          <td>tags</td>
-          <td><input class="input-sm form-control" ng-list="" ng-model="filteredDB[editItem].tags"></td>
-        </tr>
-
-        <tr>
-          <td>cast</td>
-          <td><input class="input-sm form-control" ng-list="" ng-model="filteredDB[editItem].cast"></td>
-        </tr>
-
-        <tr>
-          <td>rating</td>
-          <td><input class="input-sm form-control" ng-model="filteredDB[editItem].rating"></td>
-        </tr>
-
-        <tr>
-          <td colspan="2">
-            <button ng-click="editItem=-1;saveDB()" class="btn btn-sm btn-default">
-              <i class="fa fa-save"></i> Save Changes 
-            </button>
-          </td>
-        </tr>
-
-      </table>
-
-    </div>
-  </div>
-
-  <div class="col-sm-12">
-    
-    <div ng-repeat="(filmid, film) in filteredDB = (filmDB | filmSearch:s)">
-      <div class="col-xs-12 text-center " ng-class="perRowClass[perRow]">
       
-        <div class="embed-responsive embed-responsive-16by9">
 
-          <div class="videoBlock embed-responsive-item"
-            ng-hide="film.edit==1"
-            ng-init="film.currentScreenshot = 1"
-            style="background-image:url(screenshots/{{film.hash|limitTo:1:0}}/{{film.hash}}-{{film.currentScreenshot}}.jpg);"  
-            ng-init="film.currentScreenshot = film.sshot[0]; film.edit = 0"
-            ng-mouseleave="stopScreenPreview(filmid)" 
-            ng-mouseover="startScreenPreview(filmid)">
-            
-            <a href="{{film.path}}" ng-click="film.watched = film.watched +1; saveDB()" 
-              target="_blank" title="{{film.title}}">
-              <i class="fa fa-play playButton" ng-hide="true"></i>
-            </a>
 
-            <div class="timecode" ng-class="(unclutter ? 'unclutter':'')">
-              <span class="pull-left rating">
-                <i class="fa " ng-class="(film.rating>0?'fa-star':'fa-star-o')"
-                ng-click="film.rating = 1;saveDB();"></i>
-                <i class="fa " ng-class="(film.rating>1?'fa-star':'fa-star-o')"
-                ng-click="film.rating = 2;saveDB();"></i>
-                <i class="fa " ng-class="(film.rating>2?'fa-star':'fa-star-o')"
-                ng-click="film.rating = 3;saveDB();"></i>
-                <i class="fa " ng-class="(film.rating>3?'fa-star':'fa-star-o')"
-                ng-click="film.rating = 4;saveDB();"></i>
-                <i class="fa " ng-class="(film.rating>4?'fa-star':'fa-star-o')"
-                ng-click="film.rating = 5;saveDB();"></i>
-              </span>
-              <span class="pull-left tags" ng-class="(film.tags.length < 5 ? 'tooFewTags':'enoughTags')">
-                <i class="fa fa-tag"></i> {{film.tags.length}} Tags
-              </span>
-              {{filmDuration(film.duration)}}
-              <span ng-if="film.watched >= 1"> - {{film.watched}} Plays</span> 
-              <button ng-click="setStatus(film.path)" class="btn btn-xs btn-default">
-                <i class="fa fa-question-circle"></i>
+
+      <div ng-show="advancedFilters">
+        <hr><p><strong>Advanced Filters</strong></p>
+        <div class="input-group">
+          <span class="input-group-addon">Cast</span>
+          <input type="text" class="form-control" ng-model="f.cast" ng-list >
+          <span class="input-group-addon" ng-click="f.castMatch = 0 - f.castMatch" ng-show="f.castMatch == -1" >
+            MATCH<br>ANY
+          </span>
+          <span class="input-group-addon" ng-click="f.castMatch = 0 - f.castMatch" ng-show="f.castMatch == 1" >
+            <strong>MATCH<br>ALL</strong>
+          </span>
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">Tags</span>
+          <input type="text" class="form-control" ng-model="f.tags" ng-list >
+            <span class="input-group-addon" ng-click="f.tagMatch = 0 - f.tagMatch" ng-show="f.tagMatch == -1" >
+              MATCH<br>ANY
+            </span>
+            <span class="input-group-addon" ng-click="f.tagMatch = 0 - f.tagMatch" ng-show="f.tagMatch == 1" >
+              <strong>MATCH<BR>ALL</strong>
+            </span>
+        </div>
+      </div>
+      <button ng-click="applyFilter();" class="btn btn-success half-width-button" title="Apply Filters">
+        <i class="fa fa-check-circle"></i> Apply Filters
+      </button>
+      <hr>
+      <h3>Display Options</h3>
+      <div class="input-group">
+          <span class="input-group-addon">Per Page</span>
+          <input type="number" class="form-control" ng-model="s.perPage" min="1" max="48">
+      </div>
+      <button class="btn btn-default half-width-button" ng-click="togglePerRow()">
+        showing {{perRow}} per row
+      </button>
+      <button class="btn btn-default half-width-button" ng-click="unclutter=!unclutter" title="Unclutter the interface">
+        <i class="fa fa-sliders"></i> {{(unclutter?"Show":"Hide")}} Video Controls
+      </button>
+
+
+
+      <button class="btn btn-default half-width-button" ng-click="shuffleDB()" title="shuffle database">
+        <i class="fa fa-refresh"></i> Shuffle List
+      </button>  
+      <button class="btn btn-default half-width-button" ng-click="saveDB()" title="save to database">
+        <i class="fa fa-save"></i> Save to Database
+      </button>
+      <hr>
+      <small>Total Film Count: {{filmDB.length}}</small>
+<hr>
+      <button class="btn btn-default btn-xs" ng-click="debug = !debug"><i class="fa fa-bug"></i> Toggle Debug Mode</button>    
+      <button class="btn btn-default btn-xs" ng-click="advancedFilters = !advancedFilters"><i class="fa fa-flask"></i> Toggle Experimental Filters</button>
+      <hr>
+      
+        <p>Powered by <a href="http://github.com/paleodictyon/angular-tube"><i class="fa fa-github"></i>/angular-tube</a>.</p>
+  </div>
+  
+  <div class="row" id="MeatAndPotatos" ng-click="sidebarVis=false">
+
+    <div ng-hide="true" ng-init="editItem = -1" class="col-xs-6 hidden-xs leftSideThing">
+      <div class="leftPreview"  ng-class="editItem == -1 ? '' : 'editingBackground' " style="background-image:url({{currentScreenshot}}); "></div>
+      <div ng-show="editItem != -1" style="position:absolute;top:0;left:0;">
+
+        <table class="table table-condensed">
+
+          <tr>
+            <td>title</td>
+            <td><input class="input-sm form-control" ng-model="filteredDB[editItem].title"></td>
+          </tr>
+
+          <tr>
+            <td>tags</td>
+            <td><input class="input-sm form-control" ng-list="" ng-model="filteredDB[editItem].tags"></td>
+          </tr>
+
+          <tr>
+            <td>cast</td>
+            <td><input class="input-sm form-control" ng-list="" ng-model="filteredDB[editItem].cast"></td>
+          </tr>
+
+          <tr>
+            <td>rating</td>
+            <td><input class="input-sm form-control" ng-model="filteredDB[editItem].rating"></td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <button ng-click="editItem=-1;saveDB()" class="btn btn-sm btn-default">
+                <i class="fa fa-save"></i> Save Changes 
               </button>
-              <button ng-click="startScreenPreview(filmid)"  class="btn btn-xs btn-default"> 
-                <i class="fa fa-picture-o"></i>
-              </button>
-              <button ng-click="getTags(film.path, filmid)" ng-show="film.tags"  class="btn btn-xs btn-default"> 
-                <i class="fa fa-tag"></i>
-              </button>
-              <button ng-click="film.later=!film.later;saveDB();" class="btn btn-xs" ng-class="(film.later?'btn-primary':'btn-default')">  
-                <i class="fa fa-clock-o"></i>
-              </button>
-              <button ng-click="addToPlaylist(film.path); film.watched = film.watched +1;"  class="btn btn-xs btn-default">
-                <i class="fa fa-plus-square"></i>
-                <i class="fa fa-list"></i>
-              </button>
-              <button ng-click="film.edit = 1" class="btn btn-xs btn-default">
-                <i class="fa fa-pencil"></i>
-              </button>
-              <a ng-href="{{singleFilePlaylist(film.path)}}"  ng-click="film.watched = film.watched +1; saveDB()"  download="tmp.m3u" class="btn btn-xs btn-default">
-                <i class="fa fa-play-circle"></i>
+            </td>
+          </tr>
+
+        </table>
+
+      </div>
+    </div>
+      
+      <div ng-repeat="(filmid, film) in filteredDB = (filmDB | filmSearch:s)">
+        <div class="col-xs-12 text-center " style="margin:0;padding:0" ng-class="perRowClass[perRow]">
+        
+          <div class="embed-responsive embed-responsive-16by9">
+
+            <div class="videoBlock embed-responsive-item"
+              ng-hide="film.edit==1"
+              ng-init="film.currentScreenshot = 1"
+              style="background-image:url(screenshots/{{film.hash|limitTo:1:0}}/{{film.hash}}-{{film.currentScreenshot}}.jpg);"  
+              ng-init="film.currentScreenshot = film.sshot[0]; film.edit = 0"
+              ng-mouseleave="stopScreenPreview(filmid)" 
+              ng-mouseover="startScreenPreview(filmid)">
+              
+              <a href="{{film.path}}" ng-click="film.watched = film.watched +1; saveDB()" 
+                target="_blank" title="{{film.title}}">
+                <i class="fa fa-play playButton" ng-hide="true"></i>
               </a>
+
+              <div class="timecode" ng-class="(unclutter ? 'unclutter':'')">
+                <span class="pull-left rating">
+                  <i class="fa " ng-class="(film.rating>0?'fa-star':'fa-star-o')"
+                  ng-click="film.rating = 1;saveDB();"></i>
+                  <i class="fa " ng-class="(film.rating>1?'fa-star':'fa-star-o')"
+                  ng-click="film.rating = 2;saveDB();"></i>
+                  <i class="fa " ng-class="(film.rating>2?'fa-star':'fa-star-o')"
+                  ng-click="film.rating = 3;saveDB();"></i>
+                  <i class="fa " ng-class="(film.rating>3?'fa-star':'fa-star-o')"
+                  ng-click="film.rating = 4;saveDB();"></i>
+                  <i class="fa " ng-class="(film.rating>4?'fa-star':'fa-star-o')"
+                  ng-click="film.rating = 5;saveDB();"></i>
+                </span>
+                <span class="pull-left tags" ng-class="(film.tags.length < 5 ? 'tooFewTags':'enoughTags')">
+                  <i class="fa fa-tag"></i> {{film.tags.length}} Tags
+                </span>
+                {{filmDuration(film.duration)}}
+                <span ng-if="film.watched >= 1"> - {{film.watched}} Plays</span> 
+                <button ng-click="setStatus(film.path)" class="btn btn-xs btn-default">
+                  <i class="fa fa-question-circle"></i>
+                </button>
+                <button ng-click="startScreenPreview(filmid)"  class="btn btn-xs btn-default"> 
+                  <i class="fa fa-picture-o"></i>
+                </button>
+                <button ng-click="getTags(film.path, filmid)" ng-show="film.tags"  class="btn btn-xs btn-default"> 
+                  <i class="fa fa-tag"></i>
+                </button>
+                <button ng-click="film.later=!film.later;saveDB();" class="btn btn-xs" ng-class="(film.later?'btn-primary':'btn-default')">  
+                  <i class="fa fa-clock-o"></i>
+                </button>
+                <button ng-click="addToPlaylist(film.path); film.watched = film.watched +1;"  class="btn btn-xs btn-default">
+                  <i class="fa fa-plus-square"></i>
+                  <i class="fa fa-list"></i>
+                </button>
+                <button ng-click="film.edit = 1" class="btn btn-xs btn-default">
+                  <i class="fa fa-pencil"></i>
+                </button>
+                <a ng-href="{{singleFilePlaylist(film.path)}}"  ng-click="film.watched = film.watched +1; saveDB()"  download="tmp.m3u" class="btn btn-xs btn-default">
+                  <i class="fa fa-play-circle"></i>
+                </a>
+              </div>
+
+            </div>
+
+            <div class="videoBlock videoBlockEdit embed-responsive-item"  ng-show="film.edit==1" >
+              <table class="table table-condensed">
+                <tr>
+                  <td>title</td>
+                  <td><input class="input-sm form-control" ng-model="film.title"></td>
+                </tr>
+                <tr>
+                    <td>tags</td>
+                    <td>
+                      <input class="input-sm form-control" ng-list="" ng-model="film.tags">
+                      <p ng-repeat="(tagSet, tagSetValues) in tagWizard" class="text-left">
+                        {{tagSet}} 
+                        <br>
+                        <button class="btn btn-xs addTagButton" 
+                          ng-repeat="tagValue in tagSetValues" 
+                          ng-click="setToggleTag(tagValue, filmid)"
+                          ng-class="(film.tags.includes(tagValue) ? 'btn-info' : 'btn-default')">
+                            {{tagValue}}
+                        </button>
+                      </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>cast</td>
+                    <td><input class="input-sm form-control" ng-list="" ng-model="film.cast"></td>
+                </tr>
+                <tr>
+                    <td>rating</td>
+                    <td><input class="input-sm form-control" type="number" min="0" max="5" ng-model="film.rating"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">Added on {{film.mtime * 1000 | date:'MMM d, yyyy'}}</td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <button ng-click="film.edit=0" class="btn btn-sm btn-default">
+                      <i class="fa fa-save"></i> Save Changes 
+                    </button>
+                  </td>
+                </tr>
+              </table>
             </div>
 
           </div>
 
-          <div class="videoBlock videoBlockEdit embed-responsive-item"  ng-show="film.edit==1" >
-            <table class="table table-condensed">
-              <tr>
-                <td>title</td>
-                <td><input class="input-sm form-control" ng-model="film.title"></td>
-              </tr>
-              <tr>
-                  <td>tags</td>
-                  <td>
-                    <input class="input-sm form-control" ng-list="" ng-model="film.tags">
-                    <p ng-repeat="(tagSet, tagSetValues) in tagWizard" class="text-left">
-                      {{tagSet}} 
-                      <br>
-                      <button class="btn btn-xs addTagButton" 
-                        ng-repeat="tagValue in tagSetValues" 
-                        ng-click="setToggleTag(tagValue, filmid)"
-                        ng-class="(film.tags.includes(tagValue) ? 'btn-info' : 'btn-default')">
-                          {{tagValue}}
-                      </button>
-                    </p>
-                  </td>
-              </tr>
-              <tr>
-                  <td>cast</td>
-                  <td><input class="input-sm form-control" ng-list="" ng-model="film.cast"></td>
-              </tr>
-              <tr>
-                  <td>rating</td>
-                  <td><input class="input-sm form-control" type="number" min="0" max="5" ng-model="film.rating"></td>
-              </tr>
-              <tr>
-                  <td colspan="2">Added on {{film.mtime * 1000 | date:'MMM d, yyyy'}}</td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  <button ng-click="film.edit=0" class="btn btn-sm btn-default">
-                    <i class="fa fa-save"></i> Save Changes 
-                  </button>
-                </td>
-              </tr>
-            </table>
-          </div>
-
         </div>
+      </div>
+  </div>
+
+  <div ng-show="status!='hidden'" class="statusBar" ng-init="status = 'hidden'"><button class="btn btn-xs btn-default" title="hide status bar" ng-click="status='hidden'"><i class="fa fa-times"></i></button> {{status}} </div>
+
+
+<nav class="bottomBar navbar navbar-default navbar-fixed-bottom">
+  <div class="container-fluid">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="row">
+      <div class="col-xs-4">
+        <button class="btn btn-sm btn-default" ng-click="sidebarVis = 'sidebar-visible'"> 
+          <i class="fa fa-bars"></i> Filter
+        </button>
+      </div>
+      <div class="col-xs-4 text-center"> 
+        <a class="btn btn-default btn-xs" ng-href="{{playlistURI}}" download="example.m3u" ng-show="playlist.length > 0">Download Playlist</a>
+      </div>
+      <div class="col-xs-4 text-right">
+        
+        <button class="btn btn-sm btn-default" 
+          ng-click="s.page=s.page-1; scrollToTop()" ng-disabled="s.page == 0">
+          Previous
+        </button> 
+        Page {{s.page+1}} 
+        <button class="btn btn-sm btn-default" 
+          ng-click="s.page=s.page+1; scrollToTop(); stopPreview();" >
+          Next
+        </button>
 
       </div>
     </div>
-  </div>
-</div>
-<div class="row fixPadding">
+  </div><!-- /.container-fluid -->
+</nav>
 
-  <div class="col-sm-6 hidden-xs text-center">
-    <button class="btn  btn-sm btn-default" ng-click="saveDB()"> <i class="fa fa-save"></i> Save to Database </button>
-    <button class="btn btn-sm btn-default" ng-click="shuffleDB()"><i class="fa fa-refresh"></i> Shuffle </button>  
-  </div>
 
-  <div class="col-sm-6 text-center">
-    <button class="btn btn-sm btn-default" 
-      ng-click="s.page=s.page-1; scrollToTop()" ng-disabled="s.page == 0">
-      Previous
-    </button> 
-    Page {{s.page+1}} 
-    <button class="btn btn-sm btn-default" 
-      ng-click="s.page=s.page+1; scrollToTop(); stopPreview();" >
-      Next
-    </button>
+  <style ng-if="sidebarVis">body{overflow: hidden;}</style>
+  <div class="sidebarBackgroundHide" ng-show="sidebarVis" ng-click="sidebarVis = false">
   </div>
 </div>
 
-<div class="row">
-  <div class="col-xs-12 text-center">
-    <small>Total Film Count: {{filmDB.length}}</small><br> 
-    <button class="btn btn-default btn-xs" ng-click="debug = !debug"><i class="fa fa-bug"></i> Toggle Debug Mode</button>    
-    <button class="btn btn-default btn-xs" ng-click="advancedFilters = !advancedFilters"><i class="fa fa-flask"></i> Toggle Experimental Filters</button>
-    <a class="btn btn-default btn-xs" ng-href="{{playlistURI}}" download="example.m3u">Download Playlist</a>
-  </div>
-</div>
 
-<pre ng-show="false">{{s}}</pre>
 
-<div ng-show="status!='hidden'" class="statusBar" ng-init="status = 'hidden'"><button class="btn btn-xs btn-default" title="hide status bar" ng-click="status='hidden'"><i class="fa fa-times"></i></button> {{status}} </div>
-
-<div class="modal fade" tabindex="-1" role="dialog" id="tagModal">
-  <div style="position:fixed;left:0;top:0">
-    <span ng-repeat="shot in filmDB[fetchedTagsForFilm].sshot">
-      <img src="{{shot}}" class="img-responsive" style="height:20vh;width:auto;">
-    </span>
-  </div>
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Tags</h4>
-      </div>
-      <div class="modal-body">
-        <p>Check the tags below.  Which set is right?</p>
-        <table class="table table-bordered">
-          <tr ng-repeat="(tagListid, tagList) in fetchedTags">
-          <td>
-            <span  ng-repeat="(tagid, tag) in tagList | orderBy:'toString()'"> 
-              <span class="label label-default clickable" ng-click="remove(tag, tagListid)">
-                {{tag}}
-              </span> 
-            </span>
-            <p>
-              <button ng-click="filmDB[fetchedTagsForFilm].tags = tagList; saveDB();" class="btn btn-primary">Use These Tags!</button>
-            </p>
-          </td>
-          </tr>
-        </table>
-        <p ng-if="!fetchedTags[0].length">
-          <span ng-repeat="tag in fetchedTags"> <span class="label label-default" style="margin-right:1em">{{tag}}</span> </span>
-        </p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  <div class="modal fade" tabindex="-1" role="dialog" id="tagModal">
+    <div style="position:fixed;left:0;top:0">
+      <span ng-repeat="shot in filmDB[fetchedTagsForFilm].sshot">
+        <img src="{{shot}}" class="img-responsive" style="height:20vh;width:auto;">
+      </span>
+    </div>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Tags</h4>
+        </div>
+        <div class="modal-body">
+          <p>Check the tags below.  Which set is right?</p>
+          <table class="table table-bordered">
+            <tr ng-repeat="(tagListid, tagList) in fetchedTags">
+            <td>
+              <span  ng-repeat="(tagid, tag) in tagList | orderBy:'toString()'"> 
+                <span class="label label-default clickable" ng-click="remove(tag, tagListid)">
+                  {{tag}}
+                </span> 
+              </span>
+              <p>
+                <button ng-click="filmDB[fetchedTagsForFilm].tags = tagList; saveDB();" class="btn btn-primary">Use These Tags!</button>
+              </p>
+            </td>
+            </tr>
+          </table>
+          <p ng-if="!fetchedTags[0].length">
+            <span ng-repeat="tag in fetchedTags"> <span class="label label-default" style="margin-right:1em">{{tag}}</span> </span>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
