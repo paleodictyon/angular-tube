@@ -20,7 +20,7 @@ s.perPage = {{s.perPage}}
 </pre>
 
 <div class="container-fluid">
-  <div class="sidebar col-xs-8 col-md-6 col-lg-4" ng-init="sidebarVis = false;" ng-class="sidebarVis">
+  <div class="sidebar col-xs-12 col-md-6 col-lg-4" ng-init="sidebarVis = false;" ng-class="sidebarVis">
       <h3>Video Filters</h3>
       <div class="input-group ">
         <span class="input-group-addon">Path</span>
@@ -37,11 +37,27 @@ s.perPage = {{s.perPage}}
         <input type="text" class="form-control text-center" ng-model="f.duration.max"  ng-init="f.duration.max=0" >
         <span class="input-group-addon">Mins</span>
       </div>
-        <button class="btn btn-default half-width-button" ng-class="(s.later ? 'btn-primary':'btn-default')" ng-click="s.later = !s.later"> 
-          Marked "Later" 
-        </button>
-        <button class="btn btn-default half-width-button" ng-class="(s.new ? 'btn-primary':'btn-default')" ng-click="s.new = !s.new">  Added in Last 2 Weeks </button> 
-        <button class="btn btn-default half-width-button" ng-class="(s.unwatched ? 'btn-primary':'btn-default')" ng-click="s.unwatched = !s.unwatched"> Unwatched <i class="fa fa-eye-slash"></i> </button>
+      <div class="row">
+        <div class="col-md-6">
+          <button class="btn btn-default full-width-button" ng-class="(s.later ? 'btn-primary':'btn-default')" ng-click="s.later = !s.later"> 
+            Marked "Later" 
+          </button>
+        </div>
+        <div class="col-md-6">
+          <button class="btn btn-default full-width-button" ng-class="(s.new ? 'btn-primary':'btn-default')" ng-click="s.new = !s.new">  Added in Last 2 Weeks </button> 
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <button class="btn btn-default full-width-button" ng-class="(s.unwatched ? 'btn-primary':'btn-default')" ng-click="s.unwatched = !s.unwatched"> Unwatched <i class="fa fa-eye-slash"></i> </button>
+          
+        </div>
+        <div class="col-md-6">
+          <button ng-click="applyFilter();" class="btn btn-success full-width-button" title="Apply Filters">
+            <i class="fa fa-check-circle"></i> Apply Filters
+          </button>
+        </div>
+      </div>
 
 
       
@@ -71,38 +87,48 @@ s.perPage = {{s.perPage}}
             </span>
         </div>
       </div>
-      <button ng-click="applyFilter();" class="btn btn-success half-width-button" title="Apply Filters">
-        <i class="fa fa-check-circle"></i> Apply Filters
-      </button>
+
       <hr>
       <h3>Display Options</h3>
       <div class="input-group">
           <span class="input-group-addon">Per Page</span>
           <input type="number" class="form-control" ng-model="s.perPage" min="1" max="48">
       </div>
-      <button class="btn btn-default half-width-button" ng-click="togglePerRow()">
-        showing {{perRow}} per row
-      </button>
-      <button class="btn btn-default half-width-button" ng-click="unclutter=!unclutter" title="Unclutter the interface">
-        <i class="fa fa-sliders"></i> {{(unclutter?"Show":"Hide")}} Video Controls
-      </button>
+      <div class="row">
+        <div class="col-md-6">
+          <button class="btn btn-default full-width-button" ng-click="togglePerRow()">
+            showing {{perRow}} per row
+          </button>
+        </div>
+        <div class="col-md-6">
+          <button class="btn btn-default full-width-button" ng-click="unclutter=!unclutter" title="Unclutter the interface">
+            <i class="fa fa-sliders"></i> {{(unclutter?"Show":"Hide")}} Video Controls
+          </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <button class="btn btn-default full-width-button" ng-click="shuffleDB()" title="shuffle database">
+            <i class="fa fa-refresh"></i> Shuffle List
+          </button>  
+        </div>
+        <div class="col-md-6">
+          <button class="btn btn-default full-width-button" ng-click="saveDB()" title="save to database">
+            <i class="fa fa-save"></i> Save to Database
+          </button>
+        </div>
+      </div>
 
 
-
-      <button class="btn btn-default half-width-button" ng-click="shuffleDB()" title="shuffle database">
-        <i class="fa fa-refresh"></i> Shuffle List
-      </button>  
-      <button class="btn btn-default half-width-button" ng-click="saveDB()" title="save to database">
-        <i class="fa fa-save"></i> Save to Database
-      </button>
       <hr>
-      <small>Total Film Count: {{filmDB.length}}</small>
-<hr>
       <button class="btn btn-default btn-xs" ng-click="debug = !debug"><i class="fa fa-bug"></i> Toggle Debug Mode</button>    
       <button class="btn btn-default btn-xs" ng-click="advancedFilters = !advancedFilters"><i class="fa fa-flask"></i> Toggle Experimental Filters</button>
       <hr>
-      
-        <p>Powered by <a href="http://github.com/paleodictyon/angular-tube"><i class="fa fa-github"></i>/angular-tube</a>.</p>
+
+        <p class="text-center">
+        <small>Total Film Count: {{filmDB.length}} <span class="visible-xs"><br></span><span class="hidden-xs">&bullet;</span> Powered by <a href="http://github.com/paleodictyon/angular-tube" target="_blank"><i class="fa fa-github"></i>/angular-tube</a>.</small>
+        </p>
   </div>
   
   <div class="row" id="MeatAndPotatos" ng-click="sidebarVis=false">
@@ -264,15 +290,16 @@ s.perPage = {{s.perPage}}
   <div class="container-fluid">
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="row">
-      <div class="col-xs-4">
+      <div class="col-xs-1">
         <button class="btn btn-sm btn-default" ng-click="sidebarVis = 'sidebar-visible'"> 
-          <i class="fa fa-bars"></i> Filter
+          <i class="fa fa-bars"></i> <span class="hidden-xs">Filter</span>
         </button>
       </div>
-      <div class="col-xs-4 text-center"> 
-        <a class="btn btn-default btn-xs" ng-href="{{playlistURI}}" download="example.m3u" ng-show="playlist.length > 0">Download Playlist</a>
+      <div class="col-xs-3 text-center"> 
+        <a class="btn btn-default btn-xs" ng-href="{{playlistURI}}" download="example.m3u" ng-show="playlist.length > 0">
+         <i class="fa fa-list"></i><span class="hidden-xs">Download Playlist</span><span class="visible-xs"> DL PL</span></a>
       </div>
-      <div class="col-xs-4 text-right">
+      <div class="col-xs-8 text-right">
         
         <button class="btn btn-sm btn-default" 
           ng-click="s.page=s.page-1; scrollToTop()" ng-disabled="s.page == 0">

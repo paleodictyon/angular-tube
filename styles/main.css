@@ -203,7 +203,7 @@ a:hover .playButton {
     overflow-y: scroll;
     transition:left .25s;
 }
-.sidebar > .input-group, .sidebar > .half-width-button{
+.sidebar > .input-group, .sidebar * .full-width-button, .sidebar > .full-width-button{
   margin-bottom:.25em;
 }
 
@@ -215,8 +215,8 @@ body.sidebar-visible{
   overflow: hidden;
 }
 
-.half-width-button{
-  width:49%
+.full-width-button{
+  width:100%
 }
 .sidebarBackgroundHide{
   background-color:rgba(0,0,0,.5);
