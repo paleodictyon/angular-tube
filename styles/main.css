@@ -2,7 +2,7 @@
 
 body {
   padding: 0;
-  padding-bottom:47px;
+  padding-bottom: 60px;
 }
 
 h3 {
@@ -186,9 +186,6 @@ a:hover .playButton {
   opacity: 1;
 }
 
-.navbar{
-  height:45px!important;
-}
 .sidebar{
   background-color:#222222;
     margin: 0;

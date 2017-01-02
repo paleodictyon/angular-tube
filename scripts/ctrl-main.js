@@ -35,7 +35,7 @@ angular.module('angularTubeApp', ['ngRoute', 'cfp.hotkeys'])  .config(function (
 
     if (s.title == "" && s.hide == "" && s.duration.min == 0  && s.duration.max == 0 && s.cast.length== 0 && s.tags.length==0 && s.later == false && s.unwatched == false && s.new == false) {
       //No Filters are Set, Return a slice of the entire array.
-      console.log("No Filters Set");
+      //console.log("No Filters Set");
       return items.slice(s.perPage * s.page, s.perPage * s.page + s.perPage);
     };
 
@@ -202,6 +202,10 @@ angular.module('angularTubeApp', ['ngRoute', 'cfp.hotkeys'])  .config(function (
 
         $scope.advancedFilters = false;
 
+        // Initilize with empty film database.
+        $scope.filmDB = [];
+
+        // Initilize with empty filter.
         $scope.s = {
           title:'',
           hide:'',
