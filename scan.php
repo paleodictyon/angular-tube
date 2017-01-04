@@ -152,15 +152,10 @@ foreach ($iter as $path => $file) {
               outputJson($OUTPUT, $config['film_database_path'] . ".temp");
             }
 
-            $duration = (int)$ffprobe
-              ->streams($path)                // extracts streams informations
-              ->videos()                      // filters video streams
-              ->first()                       // returns the first video stream
-              ->get('duration');              // returns the duration property
+            $duration = (int)$ffprobe->format($path)->get('duration');
             $video = $ffmpeg->open($path);
 
             $screenDir = $config['screenshot_dir']. "/". substr($hash,0,1) . "/";
-
 
             for( $j = 0; $j < $config['screenshot_count']; $j++ ){
 
