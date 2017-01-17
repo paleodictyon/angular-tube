@@ -178,9 +178,9 @@ s.perPage = {{s.perPage}}
           <div class="embed-responsive embed-responsive-16by9">
 
             <div class="videoBlock embed-responsive-item"
+              style="background-image:url(screenshots/{{film.hash|limitTo:1:0}}/{{film.hash}}-{{film.currentScreenshot}}.jpg);"
               ng-hide="film.edit==1"
               ng-init="film.currentScreenshot = 1"
-              style="background-image:url(screenshots/{{film.hash|limitTo:1:0}}/{{film.hash}}-{{film.currentScreenshot}}.jpg);"  
               ng-init="film.currentScreenshot = film.sshot[0]; film.edit = 0"
               ng-mouseleave="stopScreenPreview(filmid)" 
               ng-mouseover="startScreenPreview(filmid)">
@@ -208,26 +208,26 @@ s.perPage = {{s.perPage}}
                 </span>
                 {{filmDuration(film.duration)}}
                 <span ng-if="film.watched >= 1"> - {{film.watched}} Plays</span> 
-                <button ng-click="setStatus(film.path)" class="btn btn-xs btn-default">
+                <button ng-click="setStatus(film.path)" class="btn btn-xs btn-default" title="Show in statusbar" onmouseenter="$(this).tooltip('show')">
                   <i class="fa fa-question-circle"></i>
                 </button>
-                <button ng-click="startScreenPreview(filmid)"  class="btn btn-xs btn-default"> 
+                <button ng-click="startScreenPreview(filmid)"  class="btn btn-xs btn-default" title="Start screenshot preview" onmouseenter="$(this).tooltip('show')">
                   <i class="fa fa-picture-o"></i>
                 </button>
-                <button ng-click="getTags(film.path, filmid)" ng-show="film.tags"  class="btn btn-xs btn-default"> 
+                <button ng-click="getTags(film.path, filmid)" ng-show="film.tags"  class="btn btn-xs btn-default" title="Get tags" onmouseenter="$(this).tooltip('show')">
                   <i class="fa fa-tag"></i>
                 </button>
-                <button ng-click="film.later=!film.later;saveDB();" class="btn btn-xs" ng-class="(film.later?'btn-primary':'btn-default')">  
+                <button ng-click="film.later=!film.later;saveDB();" class="btn btn-xs" ng-class="(film.later?'btn-primary':'btn-default')" title="Toggle watch later" onmouseenter="$(this).tooltip('show')">
                   <i class="fa fa-clock-o"></i>
                 </button>
-                <button ng-click="addToPlaylist(film.path); film.watched = film.watched +1;"  class="btn btn-xs btn-default">
+                <button ng-click="addToPlaylist(film.path); film.watched = film.watched +1;"  class="btn btn-xs btn-default" title="Add to playlist" onmouseenter="$(this).tooltip('show')">
                   <i class="fa fa-plus-square"></i>
                   <i class="fa fa-list"></i>
                 </button>
-                <button ng-click="film.edit = 1" class="btn btn-xs btn-default">
+                <button ng-click="film.edit = 1" class="btn btn-xs btn-default" title="Edit" onmouseenter="$(this).tooltip('show')">
                   <i class="fa fa-pencil"></i>
                 </button>
-                <a ng-href="{{singleFilePlaylist(film.path)}}"  ng-click="film.watched = film.watched +1; saveDB()"  download="tmp.m3u" class="btn btn-xs btn-default">
+                <a ng-href="{{singleFilePlaylist(film.path)}}"  ng-click="film.watched = film.watched +1; saveDB()"  download="tmp.m3u" class="btn btn-xs btn-default" title="Play" onmouseenter="$(this).tooltip('show')">
                   <i class="fa fa-play-circle"></i>
                 </a>
               </div>
@@ -327,7 +327,7 @@ s.perPage = {{s.perPage}}
   <div class="modal fade" tabindex="-1" role="dialog" id="tagModal">
     <div style="position:fixed;left:0;top:0">
       <span ng-repeat="shot in filmDB[fetchedTagsForFilm].sshot">
-        <img src="{{shot}}" class="img-responsive" style="height:20vh;width:auto;">
+        <img ng-src="{{shot}}" class="img-responsive" style="height:20vh;width:auto;">
       </span>
     </div>
     <div class="modal-dialog">
