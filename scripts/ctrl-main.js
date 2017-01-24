@@ -238,6 +238,10 @@ angular.module('angularTubeApp', ['ngRoute', 'cfp.hotkeys'])  .config(function (
         }
         $scope.unclutter = true;
 
+        //Change to https if desired, or as needed if videos are
+        //hosted on a different server than the website.
+        $scope.videoDomain = "http://"+window.location.hostname;
+
         $scope.perRowClass = [];
         $scope.perRowClass[1] = "col-md-12";
         $scope.perRowClass[2] = "col-md-6";
@@ -440,13 +444,13 @@ $scope.getTags = function(fileName, filmid){
   }
 
   $scope.singleFilePlaylist = function(filmURL){
-    return encodeURI('data:audio/mpegurl;charset=utf-8,'+filmURL);
+    return encodeURI('data:audio/mpegurl;charset=utf-8,'+$scope.videoDomain+filmURL);
   }
 
   $scope.playlist = [];
 
   $scope.addToPlaylist = function(fileURL){
-    $scope.playlist.push(fileURL);
+    $scope.playlist.push($scope.videoDomain+fileURL);
     var playlistContent = "data:audio/mpegurl;charset=utf-8,";
     for (var i = 0; i < $scope.playlist.length; i++) {
       playlistContent += $scope.playlist[i] + "\n"; 
